@@ -30,6 +30,9 @@ const runSequence = require('run-sequence');
 const del = require('del');
 const path = require('path');
 
+/**
+ * Config file.
+ */
 const conf = require('./config.json');
 
 const src = 'src/',
@@ -48,16 +51,14 @@ gulp.task('clean', () => del.sync(dist + '*'));
 
 gulp.task('copy:css', () =>
 {
-	return gulp.src(src + 'css/*.css')
-		.pipe(gulp.dest(dist + 'modules/full/css'));
+	let paths = conf.modules.map((modName) => path.join(src, 'css', modName + '.css'));
+	return gulp.src(paths).pipe(gulp.dest(path.join(dist, 'modules', 'full', 'css')));
 });
 
 gulp.task('copy:js', () =>
 {
 	let paths = conf.modules.map((modName) => path.join(src, 'js', modName + '.js'));
-
-	return gulp.src(paths)
-		.pipe(gulp.dest(dist + 'modules/full/js'));
+	return gulp.src(paths).pipe(gulp.dest(path.join(dist, 'modules', 'full', 'js')));
 });
 
 gulp.task('min:css', () =>
@@ -78,29 +79,27 @@ gulp.task('min:js', () =>
 
 gulp.task('merge:css', () =>
 {
-	return gulp.src(dist + 'modules/full/css/*.css')
-		.pipe(concat('iridium.css'))
-		.pipe(gulp.dest(dist));
+	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'full', 'css', modName + '.css'));
+	return gulp.src(paths).pipe(concat('iridium.css')).pipe(gulp.dest(dist));
 });
 
 gulp.task('merge:js', () =>
 {
-	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'full', 'js', modName + '.js'))
-	return gulp.src(paths)
-		.pipe(concat('iridium.js'))
-		.pipe(gulp.dest(dist));
+	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'full', 'js', modName + '.js'));
+	return gulp.src(paths).pipe(concat('iridium.js')).pipe(gulp.dest(dist));
 });
 
 gulp.task('merge:min:css', () =>
 {
-	return gulp.src(dist + 'modules/css/*.css')
+	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'css', modName + '.min.css'));
+	return gulp.src(paths)
 		.pipe(concat('iridium.min.css'))
 		.pipe(gulp.dest(dist));
 });
 
 gulp.task('merge:min:js', () =>
 {
-	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'js', modName + '.min.js'))
+	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'js', modName + '.min.js'));
 	return gulp.src(paths)
 		.pipe(concat('iridium.min.js', {newLine: ';'}))
 		.pipe(gulp.dest(dist));

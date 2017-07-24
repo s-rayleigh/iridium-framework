@@ -4,6 +4,7 @@
 		"net",
 		"builder",
 		"svg",
-		"touchable"
+		"touchable",
+		"tooltip"
 	]
 }
