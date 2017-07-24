@@ -1,11 +1,26 @@
 /**
  * Iridium Tooltip.
- * Part of the Iridium Framework.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2017 Vladislav Pashaiev
+ * @license LGPL-3.0+
  * @module tooltip
  * @requires Iridium
- * @author rayleigh <rayleigh@protonmail.com>
- * @version 0.2.0 indev
- * @licence GPL-3.0
+ * @version 0.1-indev
  */
 
 if(Iridium)
@@ -27,24 +42,23 @@ if(Iridium)
 	 */
 	Iridium.Tooltip = function(element, params)
 	{
-		var tooltipObj,
-			tooltip = this;
+		var tooltipElement,
+			_ = this;
 
-		if(!element)
+		if(!(element instanceof HTMLElement))
 		{
-			return;
+			throw new Error('Argument "element" must be HTMLElement.');
 		}
 
-		params              = params || {};
-		params.content      = params.content || element.dataset.irTooltip;
-		params.event        = params.event || element.dataset.irTtEvent || 'hover';
-		params.position     = params.position || element.dataset.irTtPos;
+		params = params || {};
+		params.content = params.content || element.dataset.irTooltip || 'Empty';
+		params.event = params.event || element.dataset.irTtEvent || 'hover';
+		params.position = params.position || element.dataset.irTtPos;
+		params.margin = params.margin || element.dataset.irMg || 10;
 		params.tooltipClass = params.tooltipClass || element.dataset.irTtClass;
 
 		this.updatePosition = function(e)
 		{
-			var margin = 10;
-
 			if(params.position !== undefined)
 			{
 				var elementRect = element.getBoundingClientRect(),
@@ -54,43 +68,43 @@ if(Iridium)
 				switch(params.position)
 				{
 					case 'top':
-						top -= tooltipObj.offsetHeight + margin;
-						left += (element.offsetWidth - tooltipObj.offsetWidth) / 2;
+						top -= tooltipElement.offsetHeight + params.margin;
+						left += (element.offsetWidth - tooltipElement.offsetWidth) / 2;
 						break;
 					case 'bottom':
-						top += element.offsetHeight + margin;
-						left += (element.offsetWidth - tooltipObj.offsetWidth) / 2;
+						top += element.offsetHeight + params.margin;
+						left += (element.offsetWidth - tooltipElement.offsetWidth) / 2;
 						break;
 					case 'left':
-						left -= tooltipObj.offsetWidth + margin;
-						top += (element.offsetHeight - tooltipObj.offsetHeight) / 2;
+						left -= tooltipElement.offsetWidth + params.margin;
+						top += (element.offsetHeight - tooltipElement.offsetHeight) / 2;
 						break;
 					case 'right':
-						left += element.offsetWidth + margin;
-						top += (element.offsetHeight - tooltipObj.offsetHeight) / 2;
+						left += element.offsetWidth + params.margin;
+						top += (element.offsetHeight - tooltipElement.offsetHeight) / 2;
 						break;
 				}
 
-				tooltipObj.style.top  = top + 'px';
-				tooltipObj.style.left = left + 'px';
+				tooltipElement.style.top  = Math.round(top) + 'px';
+				tooltipElement.style.left = Math.round(left) + 'px';
 
 				return;
 			}
 
-			tooltipObj.style.top  = (e.pageY + 15) + 'px';
-			tooltipObj.style.left = (e.pageX + 15) + 'px';
+			tooltipElement.style.top = (e.pageY + params.margin) + 'px';
+			tooltipElement.style.left = (e.pageX + params.margin) + 'px';
 		}
 
 		function removeTooltipObject()
 		{
-			if(document.body.contains(tooltipObj))
+			if(document.body.contains(tooltipElement))
 			{
-				document.body.removeChild(tooltipObj);
+				document.body.removeChild(tooltipElement);
 			}
 
 			if(params.event === 'focus')
 			{
-				var index = tooltipScroll.indexOf(tooltip);
+				var index = tooltipScroll.indexOf(_);
 				if(index !== -1)
 				{
 					tooltipScroll.splice(index, 1);
@@ -100,17 +114,17 @@ if(Iridium)
 
 		function createTooltipObject(e)
 		{
-			tooltipObj           = document.createElement('div');
-			tooltipObj.className = 'ir-tooltip-obj'
+			tooltipElement = document.createElement('div');
+			tooltipElement.className = 'ir-tooltip-obj'
 				+ (params.position ? ' ' + params.position : '')
 				+ (params.tooltipClass ? ' ' + params.tooltipClass : '');
-			tooltipObj.innerHTML = params.content;
-			document.body.appendChild(tooltipObj);
-			tooltip.updatePosition(e);
+			tooltipElement.innerHTML = params.content;
+			document.body.appendChild(tooltipElement);
+			_.updatePosition(e);
 
 			if(params.event === 'focus')
 			{
-				tooltipScroll.push(tooltip);
+				tooltipScroll.push(_);
 			}
 		}
 
@@ -139,6 +153,7 @@ if(Iridium)
 		}
 	});
 
+	//Update position on page scroll
 	window.addEventListener('scroll', function()
 	{
 		for(var i = 0; i < tooltipScroll.length; i++)
@@ -149,5 +164,5 @@ if(Iridium)
 }
 else
 {
-	console.error('Iridium Core must be included to be able to use Iridium Tooltip.');
+	console.error('Iridium Framework Core must be included to be able to use Iridium Tooltip.');
 }

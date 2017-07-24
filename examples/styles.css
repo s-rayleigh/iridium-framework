@@ -1,3 +1,31 @@
+html, body
+{
+	margin: 0;
+	padding: 0;
+	background: whitesmoke;
+}
+
+*
+{
+	box-sizing: border-box;
+}
+
+.example-panel
+{
+	width: 1170px;
+	margin: 200px auto;
+	padding: 15px;
+	background: ghostwhite;
+	border: 1px solid white;
+	outline: 1px solid lightgray;
+}
+
+hr
+{
+	border: 0;
+	border-top: 1px dashed gray;
+}
+
 /**
  * ===================================================================
  *									SVG
@@ -24,3 +52,9 @@
  * ===================================================================
  */
 
+.tooltip-object
+{
+	color: slateblue;
+	border-bottom: 1px dashed slateblue;
+	cursor: help;
+}

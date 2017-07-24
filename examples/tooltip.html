@@ -1,10 +1,54 @@
+<!--
+  ~ Iridium tooltips example.
+  ~ This file is part of Iridium Framework project.
+  ~
+  ~ Iridium Framework is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Iridium Framework is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ @author rayleigh <rayleigh@protonmail.com>
+  ~ @copyright 2017 Vladislav Pashaiev
+  ~ @license LGPL-3.0+
+  -->
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>Iridium Framework - Tooltip</title>
+		<link rel="stylesheet" href="../dist/iridium.css">
+		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
-
+		<div class="example-panel">
+			<p>
+				Lorem ipsum dolor sit amet, <span class="tooltip-object" data-ir-tooltip="Cursor tracking">consectetur</span> adipiscing elit. Aliquam eu arcu ac felis pellentesque sodales. Aliquam posuere lacus eget lectus tincidunt, at egestas quam fringilla. Maecenas id risus ornare, finibus erat non, ullamcorper mauris. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin faucibus, mi a venenatis accumsan, felis ex congue turpis, rutrum tincidunt massa massa ut nunc. Sed et euismod ante. Aliquam eget ligula ut augue vestibulum rhoncus id id tellus. Proin <span class="tooltip-object" data-ir-tooltip="Top of the object" data-ir-tt-pos="top">fringilla molestie</span> dui, id faucibus mauris venenatis in. Aliquam a dictum dolor. Vivamus arcu tortor, pellentesque et rutrum eget, vehicula sit amet nunc. Fusce urna nibh, euismod in scelerisque a, fermentum varius turpis. Sed sem dolor, dignissim sagittis neque sit amet, rutrum imperdiet risus. Quisque nec sollicitudin tortor, ut luctus justo. Nullam eget viverra nunc. Donec ac elit erat.
+			</p>
+			<p>
+				Curabitur quis mi ultrices, blandit urna eu, ultricies risus. Nullam nec tellus at lorem pharetra cursus. In hac <span class="tooltip-object" data-ir-tooltip="Bottom of the object" data-ir-tt-pos="bottom">habitasse</span> platea dictumst. Pellentesque venenatis ac odio vitae egestas. Nullam facilisis vulputate nulla, eget tempus sem malesuada a. Donec in elit dolor. Quisque eget volutpat lorem, ac consequat est.
+			</p>
+			<p>
+				Nam vel metus aliquam, commodo mauris a, tempor nisi. Suspendisse mi libero, <span class="tooltip-object" data-ir-tooltip="Left of the object" data-ir-tt-pos="left">molestie mattis</span> vehicula sed, dapibus a ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut ex egestas, feugiat orci id, elementum ipsum. Donec facilisis id nisl non suscipit. Sed aliquam egestas ultrices. Curabitur lacus mauris, pretium gravida fringilla vitae, pulvinar vel ex. Nam tincidunt dolor nec lacinia iaculis. Maecenas a nunc semper, auctor risus a, gravida augue. Maecenas eget luctus sapien, quis egestas nisi. Donec sed tempus quam.
+			</p>
+			<p>
+				Donec non congue elit. In sit amet consequat felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce sit amet tincidunt nulla, tristique posuere ante. Donec ut turpis non massa feugiat malesuada. Sed venenatis efficitur elit, id vehicula justo finibus posuere. Integer tempus metus at felis <span class="tooltip-object" data-ir-tooltip="Right of the object" data-ir-tt-pos="right">malesuada</span>, sed rutrum augue posuere. Nulla vitae tellus pharetra, lacinia justo et, finibus lacus. Fusce posuere odio sit amet lorem malesuada venenatis. Aenean in fringilla leo. Nunc dapibus euismod convallis.
+			</p>
+			<p>
+				Mauris consectetur sagittis varius. Pellentesque efficitur a odio vel scelerisque. Duis ultricies varius odio sit amet aliquet. Vestibulum sit amet nisl quis neque porta posuere. Aliquam id tempus nunc, nec blandit purus. Fusce pellentesque ligula at eros luctus, eget facilisis massa aliquet. In consequat nunc sed ipsum condimentum lobortis. Ut aliquet et ligula sed pharetra. Phasellus iaculis non elit eget hendrerit. Duis ac convallis orci. Maecenas vehicula eros non placerat condimentum.
+			</p>
+			<hr>
+			<form>
+				<input type="text" data-ir-tooltip="Displays on focus" data-ir-tt-pos="left" data-ir-tt-event="focus" placeholder="Focus me...">
+			</form>
+		</div>
+		<script src="../dist/iridium.js"></script>
 	</body>
 </html>

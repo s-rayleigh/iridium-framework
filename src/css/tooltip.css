@@ -2,108 +2,105 @@
 {
 	position: fixed;
 	max-width: 350px;
-	padding: 10px;
+	padding: 5px;
 	z-index: 3000;
 	font-size: 14px;
 	line-height: 18px;
-	background: #20272c;
-	border: 1px solid #1f2d39;
-	outline: 1px solid #1b2022;
-	box-shadow: 0 0 10px 1px rgba(13, 28, 36, .9);
+	background: ghostwhite;
+	border: 1px solid white;
+	outline: 1px solid lightgray;
+	box-shadow: 0 0 20px 0 rgba(13, 28, 36, .2);
+}
+
+.ir-tooltip-obj.top:after,
+.ir-tooltip-obj.top:before,
+.ir-tooltip-obj.bottom:after,
+.ir-tooltip-obj.bottom:before,
+.ir-tooltip-obj.left:after,
+.ir-tooltip-obj.left:before,
+.ir-tooltip-obj.right:after,
+.ir-tooltip-obj.right:before
+{
+	content: '';
+	position: absolute;
 }
 
 .ir-tooltip-obj.top:after
 {
-	content: '';
-	position: absolute;
 	left: calc(50% - 8px);
 	bottom: -8px;
 
 	border-width: 8px 8px 0 8px;
-	border-color: #20272c transparent transparent transparent;
+	border-color: ghostwhite transparent transparent transparent;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.top:before
 {
-	content: '';
-	position: absolute;
 	left: calc(50% - 10px);
 	bottom: -10px;
 
 	border-width: 10px 10px 0 10px;
-	border-color: #1f2d39 transparent transparent transparent;
+	border-color: lightgray transparent transparent transparent;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.bottom:after
 {
-	content: '';
-	position: absolute;
 	left: calc(50% - 8px);
 	top: -8px;
 
 	border-width: 0 8px 8px 8px;
-	border-color: transparent transparent #20272c transparent;
+	border-color: transparent transparent ghostwhite transparent;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.bottom:before
 {
-	content: '';
-	position: absolute;
 	left: calc(50% - 10px);
 	top: -10px;
 
 	border-width: 0 10px 10px 10px;
-	border-color: transparent transparent #1f2d39 transparent;
+	border-color: transparent transparent lightgray transparent;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.left:after
 {
-	content: '';
-	position: absolute;
 	top: calc(50% - 8px);
 	right: -8px;
 
 	border-width: 8px 0 8px 8px;
-	border-color: transparent transparent transparent #20272c;
+	border-color: transparent transparent transparent ghostwhite;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.left:before
 {
-	content: '';
-	position: absolute;
 	top: calc(50% - 10px);
 	right: -10px;
 
 	border-width: 10px 0 10px 10px;
-	border-color: transparent transparent transparent #1f2d39;
+	border-color: transparent transparent transparent lightgray;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.right:after
 {
-	content: '';
-	position: absolute;
 	top: calc(50% - 8px);
 	left: -8px;
 
 	border-width: 8px 8px 8px 0;
-	border-color: transparent #20272c transparent transparent;
+	border-color: transparent ghostwhite transparent transparent;
 	border-style: solid;
 }
 
 .ir-tooltip-obj.right:before
 {
-	content: '';
-	position: absolute;
 	top: calc(50% - 10px);
 	left: -10px;
 
 	border-width: 10px 10px 10px 0;
-	border-color: transparent #1f2d39 transparent transparent;
+	border-color: transparent lightgray transparent transparent;
 	border-style: solid;
 }
