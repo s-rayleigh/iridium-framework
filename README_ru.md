@@ -33,6 +33,7 @@ $ gulp build
 
 ## Копирайт и лицензия
 Копирайт 2017 Пашаев Владислав.
+
 Код Iridium Framework распостраняется на основании лицензии LGPL-3.0.
 
 Смотри [COPYING](COPYING) и [COPYING.LESSER](COPYING.LESSER) для подробностей.

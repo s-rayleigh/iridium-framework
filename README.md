@@ -31,8 +31,9 @@ Directory `dist/modules` contains separate module files for including into the p
 ## Examples
 Examples of using project are in `examples` directory. Every html file in that directory demonstrate work of appropriate module.
 
-## Копирайт и лицензия
+## Copyright and license
 Copyright 2017 Vladislav Pashaiev.
+
 Code of the Iridium Framework project distributed under the terms of LGPL-3.0 license.
 
 See [COPYING](COPYING) and [COPYING.LESSER](COPYING.LESSER) for details.
