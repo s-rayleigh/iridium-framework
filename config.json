@@ -1,0 +1,9 @@
+{
+	"modules": [
+		"core",
+		"net",
+		"builder",
+		"svg",
+		"touchable"
+	]
+}

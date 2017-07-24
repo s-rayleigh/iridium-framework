@@ -1,0 +1,109 @@
+.ir-tooltip-obj
+{
+	position: fixed;
+	max-width: 350px;
+	padding: 10px;
+	z-index: 3000;
+	font-size: 14px;
+	line-height: 18px;
+	background: #20272c;
+	border: 1px solid #1f2d39;
+	outline: 1px solid #1b2022;
+	box-shadow: 0 0 10px 1px rgba(13, 28, 36, .9);
+}
+
+.ir-tooltip-obj.top:after
+{
+	content: '';
+	position: absolute;
+	left: calc(50% - 8px);
+	bottom: -8px;
+
+	border-width: 8px 8px 0 8px;
+	border-color: #20272c transparent transparent transparent;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.top:before
+{
+	content: '';
+	position: absolute;
+	left: calc(50% - 10px);
+	bottom: -10px;
+
+	border-width: 10px 10px 0 10px;
+	border-color: #1f2d39 transparent transparent transparent;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.bottom:after
+{
+	content: '';
+	position: absolute;
+	left: calc(50% - 8px);
+	top: -8px;
+
+	border-width: 0 8px 8px 8px;
+	border-color: transparent transparent #20272c transparent;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.bottom:before
+{
+	content: '';
+	position: absolute;
+	left: calc(50% - 10px);
+	top: -10px;
+
+	border-width: 0 10px 10px 10px;
+	border-color: transparent transparent #1f2d39 transparent;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.left:after
+{
+	content: '';
+	position: absolute;
+	top: calc(50% - 8px);
+	right: -8px;
+
+	border-width: 8px 0 8px 8px;
+	border-color: transparent transparent transparent #20272c;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.left:before
+{
+	content: '';
+	position: absolute;
+	top: calc(50% - 10px);
+	right: -10px;
+
+	border-width: 10px 0 10px 10px;
+	border-color: transparent transparent transparent #1f2d39;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.right:after
+{
+	content: '';
+	position: absolute;
+	top: calc(50% - 8px);
+	left: -8px;
+
+	border-width: 8px 8px 8px 0;
+	border-color: transparent #20272c transparent transparent;
+	border-style: solid;
+}
+
+.ir-tooltip-obj.right:before
+{
+	content: '';
+	position: absolute;
+	top: calc(50% - 10px);
+	left: -10px;
+
+	border-width: 10px 10px 10px 0;
+	border-color: transparent #1f2d39 transparent transparent;
+	border-style: solid;
+}

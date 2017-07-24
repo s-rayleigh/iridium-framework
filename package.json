@@ -1,0 +1,23 @@
+{
+	"name": "iridium",
+	"description": "Iridium Framework for frontend development.",
+	"version": "0.0.1 indev",
+	"license": "GPL-3.0",
+	"author": "rayleigh <rayleigh@protonmail.com>",
+	"keywords": [
+		"framework",
+		"javascript",
+		"library"
+	],
+	"devDependencies": {
+		"gulp": "^3.9.1",
+		"mocha": "^3.4.2",
+		"chai": "^4.0.2",
+		"gulp-clean-css": "^4.1.5",
+		"run-sequence": "^2.0.0",
+		"del": "^3.0.0",
+		"gulp-uglify": "^3.0.0",
+		"gulp-concat": "^2.6.1",
+		"gulp-rename": "^1.2.2"
+	}
+}
