@@ -100,7 +100,7 @@ gulp.task('merge:min:css', () =>
 
 gulp.task('merge:min:js', () =>
 {
-	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'js', modName + '.js'))
+	let paths = conf.modules.map((modName) => path.join(dist, 'modules', 'js', modName + '.min.js'))
 	return gulp.src(paths)
 		.pipe(concat('iridium.min.js', {newLine: ';'}))
 		.pipe(gulp.dest(dist));
