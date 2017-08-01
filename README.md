@@ -8,6 +8,8 @@ Currently in development stage.
 * builder - Creating HTML elements from javascript code.
 * svg - Work with SVG.
 * touchable
+* tooltips
+* data_list
 
 Other modules are in development.
 ## Build from sources
