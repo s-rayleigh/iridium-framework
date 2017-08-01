@@ -1,149 +1,245 @@
 /**
- * Конструктор списка данных. Позволяет наладить связь со списком на стороне сервера удобным способом
- * @param {object} parameters Параметры списка
+ * Iridium DataList.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2017 Vladislav Pashaiev
+ * @license LGPL-3.0+
+ * @module data_list
+ * @requires Iridium
+ * @requires Iridium.Net
+ * @version 0.1-indev
  */
-function DataList(parameters)
+
+/**
+ * List load callback function.
+ * @callback ListLoadCallback
+ * @param {Array} list List.
+ */
+
+/**
+ * Callback function that caled before list load.
+ * @callback ListLoadBeginCallback
+ * @param {object} postData Data that will be sended with request of the list.
+ */
+
+if(Iridium && Iridium.Net)
 {
-	var dataList = this,
-		data			= [],		//Загружаемые данные
-		opUrl,						//Адрес операции
-		loadParameters	= {},		//Параметры запроса данных
-		onLoadCallback,				//Функция, которая вызывается после загрузки данных
-		pageNavigation	= false,	//Использовать постраничную навигацию
-		page			= 0,		//Номер текущей страницы
-		pages			= 0,		//Всего страниц
-		move			= 0,		//Перемещение по страницам
-		reloadIntervId	= 0;		//Идентификатор периодичной перезагрузки списка
-
-	if(typeof parameters.opUrl === 'string' && !parameters.opUrl)
-	{
-		console.error('Объекту DataList не передан адрес операции (opUrl)!');
-		return;
-	}
-
-	if(typeof parameters.onLoad === 'function')
-	{
-		onLoadCallback = parameters.onLoad;
-	}
-
-	if(parameters.loadParameters)
-	{
-		loadParameters	= parameters.loadParameters;
-	}
-
-	opUrl			= parameters.opUrl;
-	pageNavigation	= parameters.usePageNavigation;
-
-	Object.defineProperty(this, 'list', {
-		get: function() { return data; }
-	});
-
 	/**
-	 * Запрашивает данные и вызывает callback функцию при успешной загрузке
+	 * Creates new DataList.
+	 * Used to obtain lists from the server.
+	 * Supports page navigation and livereload.
+	 *
+	 * @param {object} [parameters] Parameters.
+	 * @param {string} [parameters.url] URL of the list.
+	 * @param {boolean} [parameters.pageNav=false] Use page navigation.
+	 * @param {object} [parameters.postData] Data that will be sended with request of the list.
+	 *
+	 * @param {object} [parameters.resultMap] Contains names of the parameters for obtain result data.
+	 * @param {string} [parameters.resultMap.pages=pages] Name of the parameter of total pages number.
+	 * @param {string} [parameters.resultMap.page=page] Name of the parameter of current page number.
+	 * @param {string} [parameters.resultMap.list=list] Name of the parameter of list.
+	 *
+	 * @param {object} [parameters.pageNavMap] Contains names of the parameters for page navigation.
+	 * @param {string} [parameters.pageNavMap.page=page] Name of the parameter of page number to go to.
+	 * @param {string} [parameters.pageNavMap.move=move] Name of the parameter of move direction.
+	 * DataList sends -1 to go backward and 1 to go forward.
+	 *
+	 * @param {ListLoadBeginCallback} [parameters.onLoadBegin] Callback function that called before every list load.
+	 * @param {ListLoadCallback} [parameters.onLoad] Callback function that called after every list load.
+	 *
+	 * @constructor
 	 */
-	this.load = function(callback)
+	Iridium.DataList = function(parameters)
 	{
-		if(pageNavigation)
-		{
-			loadParameters.page = page;
-			loadParameters.move = move;
-		}
+		var _ = this,
+			params = {
+				url: '',
+				pageNav: false,
+				postData: {},
+				resultMap: {
+					pages: 'pages',
+					page: 'page',
+					list: 'list',
+				},
+				pageNavMap: {
+					page: 'page',
+					move: 'move'
+				}
+			},
+			data = [],
+			page = 0,
+			pages = 0,
+			move = 0,
+			reloadIntervId = 0;
 
-		sendRequest('POST', opUrl, loadParameters, function(result)
+		Iridium.merge(params, parameters);
+
+		Object.defineProperties(_, {
+			'list': {
+				get: function() { return data; }
+			},
+			'url': {
+				get: function() { return params.url; },
+				set: function(val) { params.url = val; }
+			},
+			'page': {
+				get: function() { return page; }
+			},
+			'pages': {
+				get: function() { return pages; }
+			}
+		});
+
+		/**
+		 * Loads list.
+		 * @param {ListLoadCallback} [callback] Callback that will be called after list load.
+		 */
+		this.load = function(callback)
 		{
-			if(pageNavigation)
+			if(Iridium.empty(params.url))
 			{
-				page = result.page;
-				pages = result.pages;
-				move = 0;
+				throw new Error('URL must be defined.');
 			}
 
-			dataList.clearData();
-			data.pushArray(result.list);
+			var postData = Iridium.clone(params.postData);
 
-			if(onLoadCallback) { onLoadCallback(result); }
-			if(callback) { callback(); }
-		});
-	};
+			if(params.pageNav)
+			{
+				Iridium.merge(postData, {
+					[params.pageNavMap.page]: page,
+					[params.pageNavMap.move]: move
+				});
+			}
 
-	/**
-	 * Устанавливает парметры POST запроса.
-	 * @param {object} params Новые параметры.
-	 */
-	this.setLoadParameters = function(params)
-	{
-		loadParameters = params;
-	};
+			if(typeof params.onLoadBegin === 'function')
+			{
+				params.onLoadBegin(postData);
+			}
 
-	/**
-	 * Обновляет параметры POST запроса.
-	 * @param  {object} params Новые параметры.
-	 */
-	this.updateLoadParameters = function(params)
-	{
-		updateObject(loadParameters, params);
-	};
+			Iridium.Net.post(params.url, postData, function(resultData)
+			{
+				// Retrieve page navigation data
+				if(params.pageNav)
+				{
+					page = resultData[params.resultMap.page];
+					pages = resultData[params.resultMap.pages];
+					move = 0;
+				}
 
-	/**
-	 * Запускает периодичное обновление списка
-	 * @param  {int}	interval Период обновления
-	 */
-	this.liveReload = function(interval)
-	{
-		reloadIntervId = setInterval(dataList.load, interval);
-	};
+				data = resultData[params.resultMap.list];
 
-	/**
-	 * Останавливает периодичное обновление списка
-	 */
-	this.stopLiveReload = function()
-	{
-		clearInterval(reloadIntervId);
-	};
+				if(typeof params.onLoad === 'function')
+				{
+					params.onLoad(data);
+				}
 
-	/**
-	 * Указывает перейти на следующую страницу при загрузке данных
-	 */
-	this.nextPage = function() { move = 1; };
+				if(typeof callback === 'function')
+				{
+					callback(data);
+				}
+			},
+			Iridium.Net.DataType.JSON);
+		};
 
-	/**
-	 * Указывает перейти на предыдущую страницу при загрузке данных
-	 */
-	this.prevPage = function() { move = -1; };
+		/**
+		 * Sets post data that will be sended along with request.
+		 * @param data Post data.
+		 */
+		this.setPostData = function(data)
+		{
+			params.postData = data;
+		};
 
-	/**
-	 * Переход на первую страницу при последующей загрузке данных.
-	 */
-	this.firstPage = function()
-	{
-		page = 0;
-		move = 0;
-	};
+		/**
+		 * Enables live reload.
+		 * When enabled, reloads list every interval.
+		 * @param {int} [interval=1000] Interval in milliseconds.
+		 */
+		this.liveReload = function(interval)
+		{
+			interval = interval || 1000;
+			reloadIntervId = setInterval(_.load, interval);
+		};
 
-	/**
-	 * Переход на последнюю страницу при последующей загрузке данных.
-	 */
-	this.lastPage = function()
-	{
-		page = pages;
-		move = 0;
-	};
+		/**
+		 * Stops live reload.
+		 */
+		this.stopLiveReload = function()
+		{
+			clearInterval(reloadIntervId);
+		};
 
-	/**
-	 * Указывает перейти на конкретную страницу при загрузке данных
-	 * @param  {int} newPage Номер страницы
-	 */
-	this.toPage = function(newPage)
-	{
-		move = 0;
-		page = newPage;
-	};
+		/**
+		 * Moves one page forward on next list load.
+		 */
+		this.nextPage = function()
+		{
+			move = 1;
+		};
 
-	/**
-	 * Очищает массив данных
-	 */
-	this.clearData = function()
-	{
-		if(data) { data.length = 0; }
-	};
+		/**
+		 * Moves one page backward on next list load.
+		 */
+		this.prevPage = function()
+		{
+			move = -1;
+		};
+
+		/**
+		 * Moves to the first page on next list load.
+		 */
+		this.firstPage = function()
+		{
+			page = 0;
+			move = 0;
+		};
+
+		/**
+		 * Move to the last page on next list load.
+		 */
+		this.lastPage = function()
+		{
+			page = pages;
+			move = 0;
+		};
+
+		/**
+		 * Moves to the specified page on next list load.
+		 * @param {int} pageNum Number of the page.
+		 */
+		this.toPage = function(pageNum)
+		{
+			move = 0;
+			page = pageNum;
+		};
+
+		/**
+		 * Clears list.
+		 */
+		this.clearData = function()
+		{
+			if(data)
+			{
+				data.length = 0;
+			}
+		};
+	}
+}
+else
+{
+	console.error('Iridium Framework Core and Net must be included to be able to use Iridium DataList.');
 }
