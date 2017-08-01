@@ -29,16 +29,16 @@ var Iridium = {
 };
 
 /**
- * Генерирует случайный идентификатор с заданной длиной.
- * @param {int} [length = 5] Длина идентификатора.
- * @return {string} Сгенерированный идентификатор.
+ * Generates random id.
+ * @param {int} [length=5] Length.
+ * @return {string} Generated id.
  */
 Iridium.randomId = function(length)
 {
 	length = length || 5;
 
 	var result = '',
-		min = 33, max = 126; //Диапазон кодов символов
+		min = 33, max = 126; // Symbol codes range
 
 	for(var i = 0; i < length; i++)
 	{
@@ -46,16 +46,6 @@ Iridium.randomId = function(length)
 	}
 
 	return result;
-}
-
-/**
- * Преобразует число типа float в тип int.
- * @param {float} fn Число типаа float.
- * @return {int} Число типа int.
- */
-function floatToInt(fn)
-{
-	return fn | 0;
 }
 
 /**
@@ -82,9 +72,9 @@ Iridium.hasClass = function(element, className)
 }
 
 /**
- * Добавляет класс объекту.
- * @param {HTMLElement} element
- * @param {string} className
+ * Add class to the element.
+ * @param {HTMLElement} element Element.
+ * @param {string} className Class name.
  */
 Iridium.addClass = function(element, className)
 {
@@ -103,18 +93,18 @@ Iridium.addClass = function(element, className)
 }
 
 /**
- * Удаляет класс объекта.
- * @param {HTMLElement} object
- * @param {string} className
+ * Removes class from the element.
+ * @param {HTMLElement} element Element.
+ * @param {string} className Class name.
  */
-Iridium.removeClass = function(object, className)
+Iridium.removeClass = function(element, className)
 {
-	if(!object.className)
+	if(!element.className)
 	{
 		return;
 	}
 
-	var t = object.className.split(' '),
+	var t = element.className.split(' '),
 		i = t.indexOf(className);
 
 	if(i < 0)
@@ -123,7 +113,7 @@ Iridium.removeClass = function(object, className)
 	}
 
 	t.splice(i, 1);
-	object.className = t.join(' ');
+	element.className = t.join(' ');
 }
 
 /**
@@ -173,6 +163,7 @@ Iridium.empty = function(obj)
 
 /**
  * Merges the target with the specified objects and returns new object with fields of all specified objects.
+ * It also changes target object as the result object.
  * @param {object} target Target object.
  * @param {...object} sources Source objects.
  * @return {object} Result object.
@@ -207,6 +198,13 @@ Iridium.merge = function(target, sources)
 				continue;
 			}
 
+			//Merge objects in object
+			if(typeof source[key] === 'object' && typeof target[key] === 'object')
+			{
+				Iridium.merge(target[key], source[key]);
+				continue;
+			}
+
 			target[key] = source[key];
 		}
 	}
@@ -215,11 +213,11 @@ Iridium.merge = function(target, sources)
 }
 
 /**
- * Рекурсивно копирует объект.
- * @see http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
- * TODO: move to core methods
+ * Recursively clones object.
+ * @param {object} obj Object.
+ * @return {*} Cloned object.
  */
-function clone(obj)
+Iridium.clone = function(obj)
 {
 	var copy;
 
@@ -266,13 +264,14 @@ function clone(obj)
 		return copy;
 	}
 
-	throw new Error("Невозможно скопировать объект. Неподдерживаемый тип!");
+	throw new Error("Cannot copy the object. Unsupported type.");
 }
 
 /**
  * Проверяет является-ли объект элементом HTML.
  * @param {object} obj Объект.
  * @returns {boolean} True, если объект является элементом HTML.
+ * @deprecated
  */
 function isElement(obj)
 {
@@ -350,7 +349,7 @@ function readableSize(bytes)
 }
 
 /**
- * Переадресовывает на указанный URL.
+ * Redirects to the specified URL.
  * @param {string} url URL.
  */
 Iridium.goto = function(url)

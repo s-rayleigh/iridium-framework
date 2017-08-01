@@ -157,6 +157,13 @@ describe('Iridium', () =>
 
 	describe('.merge()', () =>
 	{
+		it('should return target object if merget with null', () =>
+		{
+			let target = {prop: 'content'},
+				res = Iridium.merge(target, null);
+			assert(res.prop === 'content');
+		});
+
 		it('should return empty object if empty object(s) is passed', () =>
 		{
 			assert(Iridium.empty(Iridium.merge({})));
@@ -195,6 +202,17 @@ describe('Iridium', () =>
 			let res = Iridium.merge(obj1, obj2, obj3);
 
 			assert(res.prop1 === 'one' && res.prop2 === 'two' && res.prop3 === 'three');
+		});
+
+		it('should merge objects recursively', () =>
+		{
+			let obj1 = {prop1: {prop1: '1'}},
+				obj2 = {prop1: {prop1: '11', prop2: '22'}},
+				obj3 = {prop1: {prop3: '3'}};
+			let res = Iridium.merge(obj1, obj2, obj3);
+			assert(res.prop1.prop1 === obj2.prop1.prop1
+				&& res.prop1.prop2 === obj2.prop1.prop2
+				&& res.prop1.prop3 === obj3.prop1.prop3);
 		});
 	});
 });

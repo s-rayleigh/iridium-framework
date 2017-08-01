@@ -111,19 +111,19 @@ if(Iridium)
 	};
 
 	/**
-	 *
+	 * Sends request to the URL with specified parameters.
 	 * @param {string} url URL.
-	 * @param {object} [settings] Request settings.
-	 * @param {object} [settings.data] Request data.
-	 * @param {Iridium.Net.Method} [settings.method = POST] Request method.
-	 * @param {Iridium.Net.DataType} [settings.dataType = JSON] Type of the response data.
-	 * @param {RequestSuccess} [settings.success] Success request callback.
-	 * @param {RequestError} [settings.error] Request error callback.
-	 * @param {string} [settings.user]
-	 * @param {string} [settings.password]
-	 * @param {int} [settings.timeout = 0] Timeout of the request in milliseconds.
+	 * @param {object} [parameters] Request parameters.
+	 * @param {object} [parameters.data] Request data.
+	 * @param {Iridium.Net.Method} [parameters.method = POST] Request method.
+	 * @param {Iridium.Net.DataType} [parameters.dataType = JSON] Type of the response data.
+	 * @param {RequestSuccess} [parameters.success] Success request callback.
+	 * @param {RequestError} [parameters.error] Request error callback.
+	 * @param {string} [parameters.user]
+	 * @param {string} [parameters.password]
+	 * @param {int} [parameters.timeout = 0] Timeout of the request in milliseconds.
 	 */
-	Iridium.Net.request = function(url, settings)
+	Iridium.Net.request = function(url, parameters)
 	{
 		if(Iridium.empty(url))
 		{
@@ -139,7 +139,7 @@ if(Iridium)
 			timeout: 0
 		};
 
-		Iridium.merge(params, settings);
+		Iridium.merge(params, parameters);
 
 		//urlencode data
 		params.data = this.objectURLEncode(params.data);
@@ -259,7 +259,7 @@ if(Iridium)
 			dataType: dataType,
 			error: error
 		});
-	}
+	};
 }
 else
 {
