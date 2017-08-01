@@ -119,10 +119,10 @@ if(Iridium && Iridium.Net)
 
 			if(params.pageNav)
 			{
-				Iridium.merge(postData, {
-					[params.pageNavMap.page]: page,
-					[params.pageNavMap.move]: move
-				});
+				var pgData = {};
+				pgData[params.pageNavMap.page] = page;
+				pgData[params.pageNavMap.move] = move;
+				Iridium.merge(postData, pgData);
 			}
 
 			if(typeof params.onLoadBegin === 'function')

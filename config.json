@@ -5,6 +5,7 @@
 		"builder",
 		"svg",
 		"touchable",
-		"tooltip"
+		"tooltip",
+		"data_list"
 	]
 }
