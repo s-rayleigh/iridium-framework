@@ -101,6 +101,9 @@ if(Iridium && Iridium.Net)
 			},
 			'pages': {
 				get: function() { return pages; }
+			},
+			'length': {
+				get: function() { return data.length; }
 			}
 		});
 
@@ -141,6 +144,12 @@ if(Iridium && Iridium.Net)
 				}
 
 				data = resultData[params.resultMap.list];
+
+				// Array only!
+				if(!Array.isArray(data))
+				{
+					data = [];
+				}
 
 				if(typeof params.onLoad === 'function')
 				{
