@@ -174,6 +174,15 @@ if(Iridium && Iridium.Net)
 		};
 
 		/**
+		 * Updates post data that will be sended along with request by the data that was passed as argument.
+		 * @param data Post data.
+		 */
+		this.updatePostData = function(data)
+		{
+			Iridium.merge(params.postData, data);
+		}
+
+		/**
 		 * Enables live reload.
 		 * When enabled, reloads list every interval.
 		 * @param {int} [interval=1000] Interval in milliseconds.
