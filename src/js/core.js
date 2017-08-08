@@ -172,10 +172,9 @@ Iridium.merge = function(target, sources)
 {
 	'use strict';
 
-	//null and undefined
-	if(typeof target !== 'object')
+	if(!target || typeof target !== 'object')
 	{
-		throw new TypeError('First argument must be an object.');
+		throw new TypeError('First argument must be passed and be an object.');
 	}
 
 	var result = Object(target);
@@ -199,7 +198,7 @@ Iridium.merge = function(target, sources)
 			}
 
 			//Merge objects in object
-			if(typeof source[key] === 'object' && typeof target[key] === 'object')
+			if(source[key] && target[key] && typeof source[key] === 'object' && typeof target[key] === 'object')
 			{
 				Iridium.merge(target[key], source[key]);
 				continue;
