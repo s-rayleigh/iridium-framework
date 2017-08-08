@@ -6,6 +6,7 @@
 		"svg",
 		"touchable",
 		"tooltip",
-		"data_list"
+		"data_list",
+		"combobox"
 	]
 }

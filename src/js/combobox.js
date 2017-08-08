@@ -1,366 +1,350 @@
 /**
- * Модуль добавляет возможность создания элемента "Комбобокс"
+ * Iridium Combobox.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2017 Vladislav Pashaiev
+ * @license LGPL-3.0+
  * @module combobox
+ * @requires Iridium
+ * @version 0.1-indev
  */
-
-window.addEventListener('load', function() { registerCustomElement('combo-box'); });
 
 /**
- * Создает объект комбобокса.
- * @param {object} newParams Параметры комбобокса.
- * @return {Element} Объект комбобокса.
+ * Callback function that returns view for the element.
+ * @callback ElementViewCallback
+ * @param {*} element Element.
+ * @return {string} View of the element.
  */
-function createCombobox(newParams)
+
+/**
+ * Callback function that returns value of the element.
+ * @callback ElementValueCallback
+ * @param {*} element Element.
+ * @return {*} Value of the element.
+ */
+
+if(Iridium)
 {
-	//Стандартные параметры
-	var params = {
-		data: null,					//Массив данных
-		dataElementProperty: '',	//Свойство элемента массива данных, с которого читать данные
-		dataReturnProperty: '',		//Свойство элемента, которое нужно вернуть. Если указано, требуется точное совпадение введенных данных с значением dataElementProperty
-		hintsCount: 5				//Количество отображаемых подсказок
-	};
-
-	updateObject(params, newParams, false);
-
-	if(!params.data)
+	/**
+	 * Iridium Combobox.
+	 *
+	 * @param {object} parameters Parameters.
+	 *
+	 * @param {string[]|object[]|Iridium.DataList} parameters.data Data to display as hints.
+	 *
+	 * @param {boolean} [parameters.strict=false] Strict mode.
+	 * User must select one of the proposed variants otherwise an empty string will be returned.
+	 *
+	 * @param {integer} [parameters.hintsNumber=5] Number of the hints to display. To display unlimited ammount, set to 0.
+	 *
+	 * @param {ElementViewCallback} [parameters.mapElementView] Callback function that returns view for the element.
+	 * @param {ElementValueCallback} [parameters.mapElementValue] Callback function that returns value of the element.
+	 *
+	 * @param {object} [parameters.dataListParams] Parameters for the DataList usage.
+	 * @param {boolean} [parameters.autoload=true] Load DataList during combobox creation.
+	 * @param {boolean} [parameters.autoreload=false] Autoload DataList on text input.
+	 * @param {string} [parameters.filterFieldName] Name of the parameter of filter for the elements.
+	 * @param {string} [parameters.numberFieldName] Name of the parameter of elements number to load.
+	 *
+	 * @return {HTMLElement} Combobox element.
+	 * @constructor
+	 */
+	Iridium.Combobox = function(parameters)
 	{
-		console.error('Невозможно создать объект комбобокса. Не был передан массив данных.');
-		return null;
-	}
+		var params = {
+			data: null,
+			strict: false,
+			hintsNumber: 5,
+			mapElementView: null,
+			mapElementValue: null,
+			dataListParams: {
+				autoload: true,
+				autoreload: false,
+				filterFieldName: '',
+				numberFieldName: ''
+			}
+		};
 
-	var combobox       = document.createElement('combo-box'),
-		inputField     = document.createElement('input'),
-		hintsContainer = document.createElement('div'),
-		selHintIndex   = -1,
-		useDataList    = false;
+		Iridium.merge(params, parameters);
 
-	//Используем DataList
-	if(params.data instanceof DataList)
-	{
-		if(!params.dataElementProperty)
+		if(!params.data)
 		{
-			console.error('В случае использования DataList для комбобокса, необходимо передать также имя свойства из которого необходимо получать значение!');
-			return null;
+			throw new Error("Parameter 'data' must be defined.");
 		}
 
-		useDataList = true;
-		params.data.load();
-	}
+		var selHintIndex = -1,
+			useDataList = false,
+			matchElement = null;
 
-	/**
-	 * Устанавливает видимость контейнера подсказок
-	 * @param {boolean} v true, чтобы отобразить
-	 */
-	function setHintsVisible(v)
-	{
-		if(v)
-		{ hintsContainer.style.display = 'block'; }
-		else
-		{ hintsContainer.style.display = 'none'; }
-	}
-
-	/**
-	 * Обновляет значение поля ввода и вызывает событие input
-	 * @param {string} val Новое значение поля
-	 */
-	function updateInputValue(val)
-	{
-		inputField.value = val;
-		inputField.dispatchEvent(new Event('input'));
-	}
-
-	/**
-	 * Функция возвращает используемый массив данных
-	 * @return {[type]} [description]
-	 */
-	function getDataArray()
-	{
-		return useDataList ? params.data.list : params.data;
-	}
-
-	/**
-	 * Возвращает значение поля или элемент массива данных под указанным индексом
-	 * @param {int} index Индекс
-	 */
-	function getDataArrayValue(index)
-	{
-		var array = getDataArray();
-		return params.dataElementProperty ? array[index][params.dataElementProperty] : array[index];
-	}
-
-	inputField.type = 'text';
-	setHintsVisible(false);
-
-	//Получение/установка значения комбобокса
-	Object.defineProperty(combobox, 'value',
+		// DataList support
+		if(Iridium.DataList && params.data instanceof Iridium.DataList)
 		{
-			get: function()
+			if(!params.mapElementView && !params.mapElementValue)
 			{
-				if(!params.dataReturnProperty)
-				{
-					return inputField.value;
-				}
-				else
-				{
-					var array = getDataArray(),
-						res;
+				throw new Error("Parameters 'mapElementView' and 'mapElementValue' must be assigned to be able to use DataList as data array.");
+			}
 
-					//Ищем подходящий объект и, если он найден, запоминаем значение поля dataReturnProperty для возвращения
-					//в качестве результата
-					for(var i = 0; i < array.length; i++)
+			useDataList = true;
+
+			if(params.dataListParams.numberFieldName && params.hintsNumber > 0)
+			{
+				var loadData = {};
+				loadData[params.dataListParams.numberFieldName] = params.hintsNumber;
+				params.data.setPostData(loadData);
+			}
+
+			if(params.dataListParams.autoload)
+			{
+				params.data.load();
+			}
+		}
+
+		var combobox = document.createElement('combo-box'),
+			field = document.createElement('input'),
+			hints = document.createElement('div');
+
+		hints.className = 'ir-cb-hints';
+		field.type = 'text';
+
+		combobox.appendChild(field);
+		combobox.appendChild(hints);
+
+		Object.defineProperties(combobox, {
+			'value': {
+				get: function()
+				{
+					var result;
+
+					if(matchElement)
 					{
-						var val = getDataArrayValue(i);
-
-						if(val === inputField.value)
+						result = matchElement;
+					}
+					else
+					{
+						if(params.strict)
 						{
-							res = array[i][params.dataReturnProperty];
-							break;
+							return '';
 						}
+
+						result = field.value;
 					}
 
-					return res;
-				}
+					if(typeof params.mapElementValue === 'function')
+					{
+						result = params.mapElementValue(result);
+					}
+
+					return result;
+				},
+				set: function(val) { field.value = val; }
 			},
-			set: function(val) { inputField.value = val; }
+			'id': {
+				get: function() { return field.id; },
+				set: function(val) { field.id = val; }
+			},
+			'pattern': {
+				get: function() { return field.pattern; },
+				set: function(val) { field.pattern = val; }
+			},
+			'placeholder': {
+				get: function() { return field.placeholder; },
+				set: function(val) { field.placeholder = val; }
+			},
+			'title': {
+				get: function() { return field.title; },
+				set: function(val) { field.title = val; }
+			},
+			'required': {
+				get: function() { return field.required; },
+				set: function(val) { field.required = val; }
+			}
 		});
 
-	//Получение/установка регулярного выражения проверки комбобокса
-	Object.defineProperty(combobox, 'pattern',
+		function setHintsVisible(visible)
 		{
-			get: function() { return inputField.pattern; },
-			set: function(val) { inputField.pattern = val; }
-		});
-
-	//Получение/установка placeholder комбобокса
-	Object.defineProperty(combobox, 'placeholder',
-		{
-			get: function() { return inputField.placeholder; },
-			set: function(val) { inputField.placeholder = val; }
-		});
-
-	//Получение/установка id комбобокса
-	//Но на самом деле ставит id для поля ввода, чтобы можно было сделать label
-	Object.defineProperty(combobox, 'id',
-		{
-			get: function() { return inputField.id; },
-			set: function(val) { inputField.id = val; }
-		});
-
-	//Получение/установка title комбобокса
-	Object.defineProperty(combobox, 'title',
-		{
-			get: function() { return inputField.title; },
-			set: function(val) { inputField.title = val; }
-		});
-
-	//Получение/установка обязательности запомления комбобокса
-	Object.defineProperty(combobox, 'required',
-		{
-			get: function() { return inputField.required; },
-			set: function(val) { inputField.required = val; }
-		});
-
-	//Добавляем в комбобокс поле ввода данных и контейнер для подсказок
-	combobox.appendChild(inputField);
-	combobox.appendChild(hintsContainer);
-
-	/**
-	 * Функция удаления подсказок из контейнера
-	 */
-	function removeHints()
-	{
-		while(hintsContainer.children.length > 0)
-		{
-			hintsContainer.removeChild(hintsContainer.children[0]);
+			hints.style.display = visible ? '' : 'none';
 		}
-	}
 
-	/**
-	 * Функция добавления подсказок
-	 */
-	function addHints()
-	{
-		//Получаем длину массива данных
-		var len = getDataArray().length;
-
-		//Кол-во добавленных подсказок
-		var count = 0;
-
-		for(var i = 0; i < len && count < params.hintsCount; i++)
+		function hintSelected(val)
 		{
-			//Значение из массива данных
-			var value = getDataArrayValue(i);
+			field.value = val;
 
-			if(inputField.value && stringContains(inputField.value.toLowerCase(), value.toLowerCase()))
+			if(typeof params.onHintSelected === 'function')
 			{
-				var hint = document.createElement('span');
+				params.onHintSelected();
+			}
 
-				hint.addEventListener('mousedown', function(val)
+			updateHints();
+		}
+
+		function getDataArray()
+		{
+			return useDataList ? params.data.list : params.data;
+		}
+
+		function updateHints()
+		{
+			//Remove hints
+			while(hints.children.length > 0)
+			{
+				hints.removeChild(hints.children[0]);
+			}
+
+			function addHints()
+			{
+				if(!field.value)
 				{
-					return function() { updateInputValue(val); };
-				}(value));
+					return;
+				}
 
-				hint.appendChild(document.createTextNode(value));
-				hintsContainer.appendChild(hint);
+				var len = getDataArray().length,
+					exactMatch = null;
 
-				count++;
-			}
-		}
-	}
+				for(var i = 0; i < len && (params.hintsNumber === 0 || i < params.hintsNumber); i++)
+				{
+					var element = getDataArray()[i],
+						elementView = element;
 
-	/**
-	 * Обновление видимости контейнера подсказок и сброс выбранной подсказки
-	 */
-	function updateHintsContainer()
-	{
-		//Если добавлена хотябы одна подсказка и есть фокус в поле, отображаем контейнер с подсказками
-		setHintsVisible(hintsContainer.children.length > 0 && document.activeElement === inputField);
+					if(typeof params.mapElementView === 'function')
+					{
+						elementView = params.mapElementView(elementView);
+					}
 
-		//Сбиваем индекс выделенной подсказки
-		selHintIndex = -1;
-	}
+					var lowcaseElementView = elementView.toLowerCase(),
+						lowcaseFieldValue = field.value.toLowerCase();
 
-	//Обработка события ввода текста в текстовое поле
-	inputField.addEventListener('input', function()
-	{
-		//Если используем DataList
-		if(useDataList)
-		{
-			//Устанавливаем параметр поиска по введенному значению
-			var newParam                         = {};
-			newParam[params.dataElementProperty] = inputField.value;
-			newParam.m_count                     = params.hintsCount; //Нужно записей не больше, чем мы можем вывести подсказок на экран
-			params.data.updateLoadParameters(newParam);
+					// Contains
+					if(Iridium.stringContains(lowcaseFieldValue, lowcaseElementView))
+					{
+						var hintElement           = document.createElement('div');
+						hintElement.className     = 'ir-cb-hint';
 
-			//Перезагружаем список
-			params.data.load(function()
-			{
-				removeHints();
-				addHints();
-				updateHintsContainer();
-			});
-		}
-		else
-		{
-			//Удаляем все подсказки
-			removeHints();
+						hintElement.addEventListener('mousedown', function()
+						{
+							hintSelected(this);
+						}.bind(elementView));
 
-			//Добавляем новые подсказки
-			addHints();
+						hintElement.appendChild(document.createTextNode(elementView));
+						hints.appendChild(hintElement);
+					}
 
-			//Обновляем видимость контейнера подсказок и сбрасываем индекс выбранной
-			updateHintsContainer();
-		}
-	});
+					// Search for the first exact match
+					if(lowcaseElementView === lowcaseFieldValue && !exactMatch)
+					{
+						exactMatch = element;
+					}
+				}
 
-	//Обработка события нажатия клавиши при активном фокусе текст. поля
-	inputField.addEventListener('keydown', function(e)
-	{
-		//Если нет посказок - ничего не делаем
-		if(!hintsContainer.children.length)
-		{ return; }
-
-		if(e.keyCode === 38 || e.keyCode === 40)
-		{
-			//Чтобы не перемещать курсор между символами в поле ввода клавишами вверх и вниз
-			e.preventDefault();
-
-			if(hintsContainer.children[selHintIndex])
-			{
-				removeClass(hintsContainer.children[selHintIndex], 'selected');
+				matchElement = exactMatch;
 			}
 
-			if(e.keyCode === 38)		//up
-			{ selHintIndex--; }
-			else if(e.keyCode === 40)	//down
-			{ selHintIndex++; }
-
-			if(selHintIndex < 0)
+			if(useDataList && params.dataListParams.autoreload)
 			{
-				//Ограничиваем мин. значением
-				selHintIndex = -1;
+				var loadData = {};
+
+				if(params.dataListParams.filterFieldName && field.value)
+				{
+					loadData[params.dataListParams.filterFieldName] = field.value;
+				}
+
+				params.data.updatePostData(loadData);
+				params.data.load(addHints);
 			}
 			else
 			{
-				//Ограничиваем макс. значением
-				if(selHintIndex > hintsContainer.children.length - 1)
-				{
-					selHintIndex = hintsContainer.children.length - 1;
-				}
-
-				addClass(hintsContainer.children[selHintIndex], 'selected');
+				addHints();
 			}
+
+			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
+			selHintIndex = -1;
 		}
-		else if(e.keyCode === 13) //Enter
-		{
-			//Чтобы не совершать отправку данных формы по Enter
-			e.preventDefault();
 
-			if(selHintIndex >= 0)
-			{
-				updateInputValue(hintsContainer.children[selHintIndex].innerHTML);
-				inputField.blur();
-			}
-		}
-	});
-
-	//Обработка события получения тестовым полем фокуса
-	inputField.addEventListener('focus', function()
-	{
-		inputField.select();
-		setHintsVisible(hintsContainer.children.length > 0);
-	});
-
-	//Обработка события потери фокуса текстовым полем
-	inputField.addEventListener('blur', function()
-	{
 		setHintsVisible(false);
-	});
 
-	//Добавляем функцию отдельной проверки только вслучае если используется массив объектов и нужно вернуть конкретное поле данных
-	if(params.dataReturnProperty)
-	{
-		/**
-		 * Функция дополнительного тестирования на точное совпадение введенного значения
-		 * @return {boolean|string} Результат тестирования. True - если тестирование прошло успешно. В противном случае возвращает тест ошибки
-		 */
-		combobox.testValid = function()
+		field.addEventListener('input', updateHints);
+
+		field.addEventListener('keydown', function(e)
 		{
-			if(inputField.required)
+			if(!hints.children.length)
 			{
-				if(!inputField.value.length)
-				{
-					return 'Поле должно быть заполнено!';
-				}
-
-				var found = false,
-					array = getDataArray();
-
-				//Ищем совпадение введенного значение с полем одного из элементов массива данных
-				for(var i = 0; i < array.length; i++)
-				{
-					var value = getDataArrayValue(i);
-
-					if(value === inputField.value)
-					{
-						found = true;
-						break;
-					}
-				}
-
-				if(!found)
-				{ return 'Значение поля должно совпадать с одним из предложенных!'; }
+				return;
 			}
 
-			return true;
+			if(e.keyCode === 38 || e.keyCode === 40)
+			{
+				e.preventDefault();
+
+				var currentHint = hints.children[selHintIndex];
+				if(currentHint)
+				{
+					Iridium.removeClass(currentHint, 'selected');
+				}
+
+				if(e.keyCode === 38) // Up
+				{ selHintIndex--; }
+				else if(e.keyCode === 40) // Down
+				{ selHintIndex++; }
+
+				if(selHintIndex < 0)
+				{
+					selHintIndex = -1;
+				}
+
+				if(selHintIndex > hints.children.length - 1)
+				{
+					selHintIndex = hints.children.length - 1;
+				}
+
+				Iridium.addClass(hints.children[selHintIndex], 'selected');
+			}
+			else if(e.keyCode === 13) //Enter
+			{
+				e.preventDefault();
+
+				if(selHintIndex >= 0)
+				{
+					hintSelected(hints.children[selHintIndex].innerHTML);
+					matchElement = getDataArray()[selHintIndex];
+					field.blur();
+				}
+			}
+		});
+
+		field.addEventListener('focus', function()
+		{
+			field.select();
+			setHintsVisible(hints.children.length > 0);
+		});
+
+		field.addEventListener('blur', function()
+		{
+			setHintsVisible(false);
+		});
+
+		//Далее все обработчики событий, которые будут добавляться объекту combobox, на самом деле будут добавляться field
+		combobox.addEventListener = function(event, callback, bub)
+		{
+			field.addEventListener(event, callback, bub);
 		};
+
+		return combobox;
 	}
-
-	//Далее все обработчики событий, которые будут добавляться объекту combobox, на самом деле будут добавляться inputField
-	combobox.addEventListener = function(event, callback, bub)
-	{
-		inputField.addEventListener(event, callback, bub);
-	};
-
-	return combobox;
+}
+else
+{
+	console.error('Iridium Framework Core and Net must be included to be able to use Iridium Combobox.');
 }

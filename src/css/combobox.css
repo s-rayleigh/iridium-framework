@@ -1,0 +1,48 @@
+/*
+ * Combobox module styles.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+combo-box
+{
+	display: inline-block;
+	position: relative;
+	overflow: visible;
+}
+
+.ir-cb-hints
+{
+	position: absolute;
+	width: 100%;
+	background: white;
+	border: 1px solid #70aeff;
+	margin-top: -2px;
+	box-shadow: 0 2px 7px 0 rgba(0, 0, 0, .2);
+	z-index: 500;
+}
+
+.ir-cb-hint
+{
+	cursor: pointer;
+	padding: 4px;
+	transition: 0.12s;
+}
+
+.ir-cb-hint:hover,
+.ir-cb-hint.selected
+{
+	background: #e6e6e6;
+}
