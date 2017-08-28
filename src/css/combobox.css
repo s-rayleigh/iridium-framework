@@ -27,22 +27,11 @@ combo-box
 {
 	position: absolute;
 	width: 100%;
-	background: white;
-	border: 1px solid #70aeff;
 	margin-top: -2px;
-	box-shadow: 0 2px 7px 0 rgba(0, 0, 0, .2);
 	z-index: 500;
 }
 
 .ir-cb-hint
 {
 	cursor: pointer;
-	padding: 4px;
-	transition: 0.12s;
-}
-
-.ir-cb-hint:hover,
-.ir-cb-hint.selected
-{
-	background: #e6e6e6;
 }

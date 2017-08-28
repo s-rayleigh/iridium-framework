@@ -42,6 +42,14 @@ if(Iridium)
 	/**
 	 * Iridium Combobox.
 	 *
+	 * @example
+	 * var combobox = new Iridium.Combobox({
+	 * 	data: ['first', 'second', 'third'],
+	 * 	strict: true,
+	 * 	hintsNumber: 0
+	 * });
+	 * document.body.appendChild(combobox);
+	 *
 	 * @param {object} parameters Parameters.
 	 *
 	 * @param {string[]|object[]|Iridium.DataList} parameters.data Data to display as hints.
@@ -49,7 +57,17 @@ if(Iridium)
 	 * @param {boolean} [parameters.strict=false] Strict mode.
 	 * User must select one of the proposed variants otherwise an empty string will be returned.
 	 *
-	 * @param {integer} [parameters.hintsNumber=5] Number of the hints to display. To display unlimited ammount, set to 0.
+	 * @param {boolean} [parameters.select=false] Disable text input and allow only hint selection.
+	 * That generates hints from all specified data.
+	 * Also activates hints display on combobox click.
+	 *
+	 * @param {boolean} [parameters.button=false] Create button in combobox layout that shows hints on click.
+	 * @param {HTMLElement|string} [parameters.buttonContent] Content of the combobox button. Can be html element or
+	 * raw html text that will be placed in innerHTML of the button.
+	 *
+	 * @param {boolean} [parameters.emptyInputHints=false] Display all hints from data if no text in the input field.
+	 *
+	 * @param {number} [parameters.hintsNumber=5] Number of the hints to display. To display unlimited ammount, set to 0.
 	 *
 	 * @param {ElementViewCallback} [parameters.mapElementView] Callback function that returns view for the element.
 	 * @param {ElementValueCallback} [parameters.mapElementValue] Callback function that returns value of the element.
@@ -61,6 +79,7 @@ if(Iridium)
 	 * @param {string} [parameters.numberFieldName] Name of the parameter of elements number to load.
 	 *
 	 * @return {HTMLElement} Combobox element.
+	 *
 	 * @constructor
 	 */
 	Iridium.Combobox = function(parameters)
@@ -68,6 +87,10 @@ if(Iridium)
 		var params = {
 			data: null,
 			strict: false,
+			select: false,
+			button: false,
+			buttonContent: null,
+			emptyInputHints: false,
 			hintsNumber: 5,
 			mapElementView: null,
 			mapElementValue: null,
@@ -122,6 +145,45 @@ if(Iridium)
 
 		combobox.appendChild(field);
 		combobox.appendChild(hints);
+
+		if(params.button)
+		{
+			var button = document.createElement('button');
+
+			if(params.buttonContent instanceof HTMLElement)
+			{
+				button.appendChild(params.buttonContent);
+			}
+			else if(typeof params.buttonContent === 'string')
+			{
+				button.innerHTML = params.buttonContent;
+			}
+
+			button.className = 'ir-cb-btn';
+			button.addEventListener('click', function(e)
+			{
+				e.preventDefault();
+				e.stopPropagation();
+				updateHints(true);
+				setHintsVisible(isHintsVisible() ? false : hints.children.length > 0);
+			});
+
+			combobox.appendChild(button);
+		}
+
+		if(params.emptyInputHints || params.select)
+		{
+			updateHints();
+		}
+
+		if(params.select)
+		{
+			field.disabled = true;
+			combobox.addEventListener('click', function()
+			{
+				setHintsVisible(hints.children.length > 0);
+			});
+		}
 
 		Object.defineProperties(combobox, {
 			'value': {
@@ -179,9 +241,15 @@ if(Iridium)
 			hints.style.display = visible ? '' : 'none';
 		}
 
+		function isHintsVisible()
+		{
+			return hints.style.display !== 'none';
+		}
+
 		function hintSelected(val)
 		{
 			field.value = val;
+			field.dispatchEvent(new Event('input'));
 
 			if(typeof params.onHintSelected === 'function')
 			{
@@ -196,7 +264,11 @@ if(Iridium)
 			return useDataList ? params.data.list : params.data;
 		}
 
-		function updateHints()
+		/**
+		 * Updates hints.
+		 * @param all Create all hints based on data.
+		 */
+		function updateHints(all)
 		{
 			//Remove hints
 			while(hints.children.length > 0)
@@ -206,11 +278,6 @@ if(Iridium)
 
 			function addHints()
 			{
-				if(!field.value)
-				{
-					return;
-				}
-
 				var len = getDataArray().length,
 					exactMatch = null;
 
@@ -227,11 +294,13 @@ if(Iridium)
 					var lowcaseElementView = elementView.toLowerCase(),
 						lowcaseFieldValue = field.value.toLowerCase();
 
-					// Contains
-					if(Iridium.stringContains(lowcaseFieldValue, lowcaseElementView))
+					// If select is defined, display all hints
+					// If emptyInputHints is defined, display all hints if no input text
+					// otherwise display only hints that contains input text
+					if(all || params.select || params.emptyInputHints && !field.value || field.value && Iridium.stringContains(lowcaseFieldValue, lowcaseElementView))
 					{
-						var hintElement           = document.createElement('div');
-						hintElement.className     = 'ir-cb-hint';
+						var hintElement       = document.createElement('div');
+						hintElement.className = 'ir-cb-hint';
 
 						hintElement.addEventListener('mousedown', function()
 						{
@@ -269,13 +338,16 @@ if(Iridium)
 				addHints();
 			}
 
-			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
 			selHintIndex = -1;
 		}
 
 		setHintsVisible(false);
 
-		field.addEventListener('input', updateHints);
+		field.addEventListener('input', function()
+		{
+			updateHints();
+			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
+		});
 
 		field.addEventListener('keydown', function(e)
 		{
@@ -324,7 +396,7 @@ if(Iridium)
 			}
 		});
 
-		field.addEventListener('focus', function()
+		field.addEventListener('focus', function(e)
 		{
 			field.select();
 			setHintsVisible(hints.children.length > 0);
@@ -341,8 +413,35 @@ if(Iridium)
 			field.addEventListener(event, callback, bub);
 		};
 
+		combobox.hideHints = function()
+		{
+			setHintsVisible(false);
+		};
+
+		Iridium.Combobox.list.push(combobox);
+
 		return combobox;
 	}
+
+	Iridium.Combobox.list = [];
+
+	window.addEventListener('click', function(e)
+	{
+		// Leave only comboboxes tha are in body
+		Iridium.Combobox.list = Iridium.Combobox.list.filter(function(cb)
+		{
+			return document.body.contains(cb);
+		});
+
+		// Hide hints on all comboboxes except target one
+		Iridium.Combobox.list.forEach(function(cb)
+		{
+			if(e.target !== cb && !cb.contains(e.target))
+			{
+				cb.hideHints();
+			}
+		});
+	});
 }
 else
 {
