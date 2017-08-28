@@ -139,7 +139,6 @@ if(Iridium && Iridium.Net)
 		{
 			Iridium.SVG.loadFromURL(links[i].link, function(svg)
 			{
-				console.log(svg);
 				for(var j = 0; j < this.elements.length; j++)
 				{
 					var img = this.elements[j];
