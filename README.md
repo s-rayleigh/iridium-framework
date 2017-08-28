@@ -1,5 +1,5 @@
 # Iridium Framework
-Iridium Framework is a modular frontent toolset for creating web applications.
+Iridium Framework is a modular frontend toolset for creating web applications.
 
 Currently in development stage.
 ## Modules
