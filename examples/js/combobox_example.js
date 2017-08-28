@@ -23,13 +23,60 @@
 
 window.addEventListener('load', function()
 {
-	var combobox = new Iridium.Combobox({
-		data: ['test 1', 'test 2', 'test 3'],
-		onHintSelected: function() {
-			console.log('value: ' + combobox.value);
-		},
-		hintsNumber: 0
+	// Simple combobox
+
+	var simpleCombobox = new Iridium.Combobox({
+		data: ['test 1', 'test 2', 'test 3']
 	});
 
-	document.getElementsByClassName('example-panel')[0].appendChild(combobox);
+	simpleCombobox.addEventListener('input', function()
+	{
+		document.getElementById('simple-cb-value').innerHTML = simpleCombobox.value;
+	});
+
+	document.getElementById('simple-cb-place').appendChild(simpleCombobox);
+
+	// Simple strict combobox
+
+	var strictCombobox = new Iridium.Combobox({
+		data: ['Lorem', 'Ipsum', 'Dolor', 'Sit', 'Amet'],
+		strict: true
+	});
+
+	strictCombobox.addEventListener('input', function()
+	{
+		document.getElementById('strict-cb-value').innerHTML = strictCombobox.value;
+	});
+
+	document.getElementById('strict-cb-place').appendChild(strictCombobox);
+
+	// Combobox with button
+	var buttonCombobox = new Iridium.Combobox({
+		data: ['quick', 'brown', 'fox', 'jumps', 'over'],
+		button: true,
+		buttonContent: 'hints',
+		emptyInputHints: true
+	});
+
+	buttonCombobox.addEventListener('input', function()
+	{
+		document.getElementById('button-cb-value').innerHTML = buttonCombobox.value;
+	});
+
+	document.getElementById('button-cb-place').appendChild(buttonCombobox);
+
+	// Combobox like select with button
+	var selectCombobox = new Iridium.Combobox({
+		data: ['Jackdaws', 'love', 'big', 'sphinx', 'quartz'],
+		button: true,
+		buttonContent: '▼',
+		select: true
+	});
+
+	selectCombobox.addEventListener('input', function()
+	{
+		document.getElementById('select-btn-cb-value').innerHTML = selectCombobox.value;
+	});
+
+	document.getElementById('select-btn-cb-place').appendChild(selectCombobox);
 });
