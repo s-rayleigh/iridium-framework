@@ -1,267 +1,401 @@
 /**
- * Анимирует свойства объектов.
+ * Iridium Animation.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
  * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2017 Vladislav Pashaiev
+ * @license LGPL-3.0+
+ * @module animation
+ * @requires Iridium
+ * @version 0.1-indev
  */
-var Animation = 
+
+
+if(Iridium)
 {
-	/**
-	 * ВременнЫе функции.
-	 *
-	 * Для данных функций должны соблюдаться следующие условия:
-	 * f(0) = 0, f(1) = 1
-	 */
-	timeFunctions:
+	Iridium.Animation = (function()
 	{
-		linear: function(x) { return x; },				//y = x
-		quad: function(x) { return Math.pow(x, 2); },	//y = x^2
-		sqrt: function(x) { return Math.sqrt(x); }		//y = sqrt(x)
-	},
+		/**
+		 * Splits property value to the number and unit.
+		 * @param {string|number} value Value.
+		 * @return {{value: number, unit: string}} Number and unit of the value.
+		 */
+		function splitValue(value)
+		{
+			if(typeof value === 'number')
+			{
+				return {value: value, unit: ''};
+			}
 
-	/**
-	 * Набор стандартных анимаций.
-	 */
-	animations:
-	{
-		fadeIn: {
-			start: {opacity: 0},
-			end: {opacity: 1}
-		},
-		fadeOut: {
-			start: {opacity: 1},
-			end: {opacity: 0}
+			// From end to start
+			for(var i = value.length; i > 0; i--)
+			{
+				if(value[i] <= '9' && value[i] >= '0')
+				{ break; }
+			}
+
+			return {
+				value: parseFloat(value.substring(0, ++i)),
+				unit: value.substring(i)
+			};
 		}
-	},
 
-	/**
-	 * Задает анимацию объекту.
-	 * @param {object} newParams Параметры анимации.
-	 * @param {string|object} [newParams.animation]
-	 */
-	animate: function(newParams)
-	{
-		var params = {
-			animation: 'fadeIn',	//Название функции анимации
-			timeDirection: 'in',	//Направление действия функции анимации (in/out/inout)
-			timeFunction: 'linear',	//Временная функция
-			duration: 1000,			//Время анимации в мс
-			repeat: false,			//Нужно-ли повторять анимацию
-			onEnd: function() {}	//Функция, которая вызывается по окончанию анимации
+		/**
+		* Iridium Animation.
+		*
+		* @example
+		* var animation = new Iridium.Animation({
+		* 	element: document.getElementById('element-id')
+		* });
+		*
+		* @param {object} [parameters] Parameters of the animation.
+		* @param {HTMLElement} [parameters.element] Element.
+		*
+		* @param {object|('fadeIn'|'fadeOut')} [parameters.animation=fadeIn] Animation data or predefined animation.
+		* @param {object} [parameters.animation.start] Start parameters of the animation.
+		* @param {object} [parameters.animation.end] End parameters of the animation.
+		*
+		* @param {('in'|'out'|'inout')} [parameters.direction=in] Direction of the time function.
+		* @param {function|('linear'|'quad'|'sqrt')} [parameters.function] Function of the animation.
+		* @param {number} [parameters.duration=1000] Duration in milliseconds.
+		*
+		* @param {number|Infinity} [parameters.repeats=0] Number of the repeats.
+		* Can be set to Infinity for the endless cycle animation.
+		*
+		* @param {boolean} [parameters.autostart=true] Autostart animation after creation.
+		*
+		* @param {function} [parameters.onStop] Callback function, that called after the animation stop.
+		* @param {function} [parameters.onRepeat] Callback function, that called after the animation repeat.
+		*
+		* @constructor
+		*/
+		function Animation(parameters)
+		{
+			var params = {
+				animation: 'fadeIn',
+				direction: 'in',
+				function: 'linear',
+				duration: 1000,
+				repeats: 0,
+				autostart: true
+			};
+
+			Iridium.merge(params, parameters);
+
+			this._element = params.element;
+
+			if(typeof this.timeFunctions[params.function] === 'function')
+			{
+				this._timeFunction = this.timeFunctions[params.function];
+			}
+			else if(typeof params.function === 'function')
+			{
+				this._timeFunction = params.function;
+			}
+
+			if(!this._timeFunction)
+			{
+				throw new Error('Incorrect time function.');
+			}
+
+			if(typeof params.animation === 'object')
+			{
+				this._animation = params.animation;
+
+				if(this._animation.start === undefined && this._animation.end === undefined)
+				{
+					throw new Error('Property "animation" should have "start" and/or "stop" property.');
+				}
+			}
+			else if(typeof params.animation === 'string' && typeof this.animations[params.animation] === 'object')
+			{
+				this._animation = Iridium.clone(this.animations[params.animation]);
+			}
+
+			if(!this._animation)
+			{
+				throw new Error('Cannot obtain animation properties.');
+			}
+
+			this._direction = params.direction;
+
+			if(this._direction !== 'in' && this._direction !== 'out' && this._direction !== 'inout')
+			{
+				throw new Error('Time direction should be "in" or "out" or "inout".');
+			}
+
+			this._duration = params.duration > 0 ? params.duration : 1000;
+
+			if(typeof params.onStop === 'function')
+			{
+				this._onStop = params.onStop;
+			}
+
+			if(typeof params.onStop === 'function')
+			{
+				this._onStop = params.onStop;
+			}
+
+			if(typeof params.onRepeat === 'function')
+			{
+				this._onRepeat = params.onRepeat;
+			}
+
+			/**
+			 * Is animation started.
+			 * @type {boolean}
+			 * @private
+			 */
+			this._started = false;
+
+			/**
+			 * Is need to stop animation in the next frame.
+			 * @type {boolean}
+			 * @private
+			 */
+			this._needStop = false;
+
+			/**
+			 * Number of the repeats.
+			 * @type {boolean}
+			 * @private
+			 */
+			this._repeats = params.repeats;
+
+			if(params.autostart)
+			{
+				this.start();
+			}
+		}
+
+		/**
+		 * Standard time functions.
+		 * f(0) = 0, f(1) = 1
+		 */
+		Animation.prototype.timeFunctions = {
+			/**
+			 * y = x
+			 */
+			linear: function(x) { return x; },
+
+			/**
+			 * y = x^2
+			 */
+			quad: function(x) { return Math.pow(x, 2); },
+
+			/**
+			 * y = sqrt(x)
+			 */
+			sqrt: function(x) { return Math.sqrt(x); }
 		};
 
-		updateObject(params, newParams);
-
-		if(params.obj === null || params.obj === undefined)
-		{
-			console.error('Не задан объект для выполнения анимации!');
-			return;
-		}
-
-		if(typeof Animation.timeFunctions[params.timeFunction] !== 'function')
-		{
-			console.error('Задана несуществующая временная функция "' + params.timeFunction + '" для анимации!');
-			return;
-		}
-
-		var animation;
-
-		//Получаем объект со свойствами для анимации
-		if(typeof params.animation === 'object')
-		{
-			animation = params.animation;
-		}
-		else if(typeof params.animation === 'string' && 
-				typeof Animation.animations[params.animation] === 'object')
-		{
-			//Копируем объект, чтобы не изменять исходные данные
-			animation = clone(Animation.animations[params.animation]);
-		}
-		else
-		{
-			console.error('Свойства анимации заданы неправильно!');
-			return;
-		}
-		
-		if(animation.start === undefined && animation.end === undefined)
-		{
-			console.error('Нужно задать start и/или end для анимации.');
-			return;
-		}
-		
-		//Подготавливаем свойства анимации
-		prepareAnimationValues(params.obj, animation);
-		
-		//Время начала анимации
-		var startTime = performance.now();
-
-		requestAnimationFrame(function animationFrame(time)
-		{
-			//Частичное время анимации (процент прохождения анимации) [0; 1]
-			var fractionTime = (time - startTime) / params.duration;
-			if(fractionTime > 1) { fractionTime = 1; }
-
-			//Зависимость прогресса анимации от времени анимации
-			var progress;
-			
-			switch(params.direction)
-			{
-				default:
-				case 'in':
-					progress = Animation.timeFunctions[params.timeFunction](fractionTime);
-					break;
-				case 'out':
-					progress = 1 - Animation.timeFunctions[params.timeFunction](1 - fractionTime);
-					break;
-				case 'inout':
-					if(fractionTime < 0.5)
-					{
-						progress = Animation.timeFunctions[params.timeFunction](fractionTime * 2) / 2;
-					}
-					else
-					{
-						progress = (2 - Animation.timeFunctions[params.timeFunction]((1 - fractionTime) * 2)) / 2;
-					}
-					break;
+		/**
+		 * Standart animations.
+		 */
+		Animation.prototype.animations = {
+			fadeIn: {
+				start: {opacity: 0},
+				end: {opacity: 1}
+			},
+			fadeOut: {
+				start: {opacity: 1},
+				end: {opacity: 0}
 			}
-
-			for(var prop in animation.start)
-			{
-				params.obj.style[prop] = (animation.start[prop].value + animation.difference[prop].value * progress) + animation.start[prop].unit;
-			}
-
-			//Отрисовка кадра анимации
-			//animationFunction(params.obj, progress);
-
-			//Пока частичное время не достигло 1 - продолжаем анимацию
-			//Также продолжаем при повторе
-			if(fractionTime < 1)
-			{
-				requestAnimationFrame(animationFrame);
-			}
-			else if(params.repeat) //Циклический повтор анимации
-			{
-				startTime = performance.now();
-				requestAnimationFrame(animationFrame);		
-			}
-			else
-			{
-				//callback функция по завершению анимации
-				params.onEnd();
-			}
-		});
-	}
-};
-
-/**
- * Подготавливает свойства анимации для их использования
- * @param	{object} obj		Объект анимации
- * @param	{object} animation	Объект со свойствами анимации
- * @return	{object}			Объект с подготовленными свойствами анимации
- */
-function prepareAnimationValues(obj, animation)
-{
-	//Если не задан start или end - создаем их
-	if(animation.start === undefined)
-	{
-		animation.start = {};
-	}
-	else if(animation.end === undefined)
-	{
-		animation.end = {};
-	}
-	
-	//Разница start и end
-	animation.difference = {};
-	
-	var prop;
-	
-	for(prop in animation.end)
-	{
-		//Свойства, которые отсутсвуют в start копируем из end. Значение берем из стиля объекта
-		if(!animation.start.hasOwnProperty(prop))
-		{
-			animation.start[prop] = getObjectStyleValue(obj, prop);
-		}
-	}
-	
-	for(prop in animation.start)
-	{
-		//Свойства, которые отсутсвуют в end копируем из start. Значение берем из стиля объекта
-		if(!animation.end.hasOwnProperty(prop))
-		{
-			animation.end[prop] = getObjectStyleValue(obj, prop);
-		}
-		
-		//Разделяем числовое значение и единицы измерения у значения свойства
-		animation.start[prop]	= splitPropValue(animation.start[prop]);
-		animation.end[prop]		= splitPropValue(animation.end[prop]);
-		
-		//Сопоставляем единицы измерения
-		if(animation.start[prop].unit !== animation.end[prop].unit)
-		{
-			if(!animation.start[prop].unit.length)
-			{
-				animation.start[prop].unit = animation.end[prop].unit;
-			}
-			else
-			{
-				animation.end[prop].unit = animation.start[prop].unit;
-			}
-		}
-		
-		//Разница значений анимации
-		animation.difference[prop] = {
-			value: animation.end[prop].value - animation.start[prop].value,
-			unit: animation.start[prop].unit	
 		};
-	}
-}
 
-/**
- * Разеляет значение свойства css на числовое значение и единицы измерения
- * @param	{string} value	Строковое представление значения свойства
- * @return	{object}		Объект с разделенным числовым значением и единицами измерения
- */
-function splitPropValue(value)
-{
-	if(typeof value === 'number')
-	{
-		return {value: value, unit: ''};
-	}
-	
-	//Ищем справа налево где заканчивается числовое значение
-	for(var i = value.length; i > 0; i--)
-	{
-		if(value[i] <= '9' && value[i] >= '0') { break; }
-	}
-	
-	return {
-		value: parseFloat(value.substring(0, ++i)),	//Числовое значение
-		unit: value.substring(i)					//Единицы изменения
-	};
-}
+		/**
+		 * Starts the animation.
+		 * @return {Iridium.Animation} Animation.
+		 */
+		Animation.prototype.start = function()
+		{
+			if(!(this._element instanceof HTMLElement))
+			{
+				throw new Error('Set element that is instance of HTMLElement.');
+			}
 
-/**
- * Возвращает значение свойства стиля объекта
- * @param	{Element}	obj			Объект, свойство которого необходимо получить
- * @param	{string}	propName	Имя свойства
- * @return	{string}				Значение свойства объекта или пустую строку, если нет возможности получить значение свойства
- */
-function getObjectStyleValue(obj, propName)
+			if(this._started)
+			{
+				this._repeats++;
+				return this;
+			}
+
+			this._started   = true;
+			this._needStop  = false;
+			this._startTime = performance.now();
+
+			if(!this._animation.difference)
+			{
+				// Create start or end if they does not exist
+				this._animation.start = this._animation.start || {};
+				this._animation.end   = this._animation.end || {};
+
+				// Difference between start and end
+				this._animation.difference = {};
+
+				var prop;
+
+				// Copy properties from end to start
+				for(prop in this._animation.end)
+				{
+					if(!this._animation.start.hasOwnProperty(prop))
+					{
+						this._animation.start[prop] = Iridium.getStyle(this._element, prop);
+					}
+				}
+
+				for(prop in this._animation.start)
+				{
+					// Copy properties from start to end
+					if(!this._animation.end.hasOwnProperty(prop))
+					{
+						this._animation.end[prop] = Iridium.getStyle(this._element, prop);
+					}
+
+					this._animation.start[prop] = splitValue(this._animation.start[prop]);
+					this._animation.end[prop]   = splitValue(this._animation.end[prop]);
+
+					// Merge units
+					if(this._animation.start[prop].unit !== this._animation.end[prop].unit)
+					{
+						if(!this._animation.start[prop].unit.length)
+						{
+							this._animation.start[prop].unit = this._animation.end[prop].unit;
+						}
+						else
+						{
+							this._animation.end[prop].unit = this._animation.start[prop].unit;
+						}
+					}
+
+					// Find defference
+					this._animation.difference[prop] = {
+						value: this._animation.end[prop].value - this._animation.start[prop].value,
+						unit: this._animation.start[prop].unit
+					};
+				}
+			}
+
+			var _ = this;
+
+			requestAnimationFrame(function animationFrame(time)
+			{
+				// [0; 1]
+				var fractionTime = (time - _._startTime) / _._duration;
+
+				if(fractionTime > 1)
+				{
+					fractionTime = 1;
+				}
+
+				var progress;
+
+				switch(_._direction)
+				{
+					case 'in':
+						progress = _._timeFunction(fractionTime);
+						break;
+					case 'out':
+						progress = 1 - _._timeFunction(1 - fractionTime);
+						break;
+					case 'inout':
+						if(fractionTime < 0.5)
+						{
+							progress = _._timeFunction(fractionTime * 2) / 2;
+						}
+						else
+						{
+							progress = (2 - _._timeFunction((1 - fractionTime) * 2)) / 2;
+						}
+						break;
+				}
+
+				for(var prop in _._animation.start)
+				{
+					_._element.style[prop] = (_._animation.start[prop].value + _._animation.difference[prop].value * progress) + _._animation.start[prop].unit;
+				}
+
+				if(!_._needStop)
+				{
+					if(fractionTime < 1)
+					{
+						requestAnimationFrame(animationFrame);
+					}
+					else if(_._repeats > 0)
+					{
+						_._startTime = performance.now();
+						_._repeats--;
+						_._onRepeat && _._onRepeat();
+						requestAnimationFrame(animationFrame);
+					}
+
+					return;
+				}
+
+				_._started = false;
+				_._onStop && _._onStop();
+			});
+
+			return this;
+		};
+
+		/**
+		 * Stops the animation.
+		 * @return {Iridium.Animation} Animation.
+		 */
+		Animation.prototype.stop = function()
+		{
+			if(!this._started)
+			{
+				return this;
+			}
+
+			this._needStop = true;
+			return this;
+		};
+
+		/**
+		 * Returns state of the animation.
+		 * @return {boolean} True, if animation is running.
+		 */
+		Animation.prototype.isRunning = function()
+		{
+			return this._started;
+		};
+
+		/**
+		 * Sets element.
+		 * @param {HTMLElement} element Element.
+		 * @return {Iridium.Animation} Animation.
+		 */
+		Animation.prototype.setElement = function(element)
+		{
+			if(this._started)
+			{
+				throw new Error('Cannot set element while animation is running.');
+			}
+
+			this._element = element;
+			return this;
+		};
+
+		return Animation;
+	}());
+}
+else
 {
-	if(obj.style[propName]) //style="" (html)
-	{
-		return obj.style[propName];
-	}
-	else if(obj.currentStyle) //IE css
-	{
-		return obj.currentStyle[propName];
-	}
-	else if(window.getComputedStyle) //css
-	{
-		return window.getComputedStyle(obj).getPropertyValue(propName);
-	}
-	else
-	{
-		return '';
-	}
+	console.error('Iridium Framework Core must be included to be able to use Iridium Animation.');
 }

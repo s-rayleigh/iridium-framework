@@ -1,8 +1,9 @@
 {
 	"modules": [
 		"core",
-		"net",
+		"animation",
 		"builder",
+		"net",
 		"svg",
 		"touchable",
 		"tooltip",
