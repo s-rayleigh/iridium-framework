@@ -117,6 +117,35 @@ Iridium.removeClass = function(element, className)
 }
 
 /**
+ * Returns value of the element style.
+ * @param {HTMLElement} element Element.
+ * @param {string} styleName Name of the style.
+ * @return {string} Value of the style.
+ */
+Iridium.getStyle = function(element, styleName)
+{
+	if(!(element instanceof HTMLElement))
+	{
+		throw new Error('Element should be instance of HTMLElement.');
+	}
+
+	if(element.style[styleName]) // style="" (html)
+	{
+		return element.style[styleName];
+	}
+	else if(element.currentStyle) // IE css
+	{
+		return element.currentStyle[styleName];
+	}
+	else if(window.getComputedStyle) // css
+	{
+		return window.getComputedStyle(element).getPropertyValue(styleName);
+	}
+
+	throw new Error('Cannot get style from the element.');
+}
+
+/**
  * Checks if the object is empty
  * @param {object} obj Object.
  * @return {boolean} Returns true if object is empty.
@@ -220,13 +249,11 @@ Iridium.clone = function(obj)
 {
 	var copy;
 
-	//Обрабатываем 3 простых типа случая
 	if(obj === null || obj === undefined || typeof obj !== 'object')
 	{
 		return obj;
 	}
 
-	//Обрабатываем как дату
 	if(obj instanceof Date)
 	{
 		copy = new Date();
@@ -234,20 +261,18 @@ Iridium.clone = function(obj)
 		return copy;
 	}
 
-	//Обрабатываем как массив рекурсивно
 	if(obj instanceof Array)
 	{
 		copy = [];
 
 		for(var i = 0, len = obj.length; i < len; i++)
 		{
-			copy[i] = clone(obj[i]);
+			copy[i] = Iridium.clone(obj[i]);
 		}
 
 		return copy;
 	}
 
-	//Обрабатываем как объект
 	if(obj instanceof Object)
 	{
 		copy = {};
@@ -256,30 +281,14 @@ Iridium.clone = function(obj)
 		{
 			if(obj.hasOwnProperty(attr))
 			{
-				copy[attr] = clone(obj[attr]);
+				copy[attr] = Iridium.clone(obj[attr]);
 			}
 		}
 
 		return copy;
 	}
 
-	throw new Error("Cannot copy the object. Unsupported type.");
-}
-
-/**
- * Проверяет является-ли объект элементом HTML.
- * @param {object} obj Объект.
- * @returns {boolean} True, если объект является элементом HTML.
- * @deprecated
- */
-function isElement(obj)
-{
-	if(typeof HTMLElement === 'object')
-	{
-		return obj instanceof HTMLElement;
-	}
-
-	return !!obj && typeof obj.nodeName === 'string';
+	throw new Error("Cannot clone the object. Unsupported type.");
 }
 
 /**
@@ -331,6 +340,7 @@ Array.prototype.pushArray = function(array)
 
 /**
  * Преобразовывает кол-во байт в сокращенный вариант с двоичными приставками МЭК.
+ * TODO: rewrite
  * @param {int} bytes Кол-во байт.
  * @return {string} Сокращенный вариант с приставками МЭК.
  */
