@@ -292,36 +292,6 @@ Iridium.clone = function(obj)
 }
 
 /**
- * Создает крестик закрытия в формате svg
- * @deprecated Use SVG
- */
-function createCloseCross()
-{
-	var xmlns = 'http://www.w3.org/2000/svg';
-
-	var cross = document.createElementNS(xmlns, 'svg');
-	cross.setAttributeNS('', 'viewBox', '0 0 16 16');
-
-	var g = document.createElementNS(xmlns, 'g');
-	g.setAttributeNS('', 'stroke-width', '3');
-	g.setAttributeNS('', 'stroke-linecap', 'round');
-
-	var path1 = document.createElementNS(xmlns, 'path'),
-		path2 = document.createElementNS(xmlns, 'path');
-
-	path1.setAttributeNS('', 'd', 'M 2 2 L 14 14');
-	path2.setAttributeNS('', 'd', 'M 2 14 L 14 2');
-
-	g.appendChild(path1);
-	g.appendChild(path2);
-
-	cross.appendChild(g);
-	cross.setAttribute('class', 'close-cross unselectable');
-
-	return cross;
-}
-
-/**
  * Добавляет в массив элементы переданного массива без создания нового массива
  * @param {Array} array Массив элементов, которые необходимо добавить
  */
