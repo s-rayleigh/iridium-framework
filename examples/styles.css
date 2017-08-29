@@ -176,3 +176,16 @@ button:active
 	border-bottom: 1px dashed slateblue;
 	cursor: help;
 }
+
+/**
+ * ===================================================================
+ *								ANIMATION
+ * ===================================================================
+ */
+
+.anim-box
+{
+	width: 100px;
+	height: 100px;
+	background: red;
+}
