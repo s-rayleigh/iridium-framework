@@ -1,5 +1,5 @@
 /**
- * Iridium Framework core file.
+ * Iridium Framework Core.
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -23,10 +23,9 @@
 
 /**
  * Iridium Framework Core.
+ * @namespace
  */
-var Iridium = {
-	version: '0.0.1 indev'
-};
+var Iridium = {};
 
 /**
  * Generates random id.
