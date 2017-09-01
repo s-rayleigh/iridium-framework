@@ -8,6 +8,7 @@
 		"touchable",
 		"tooltip",
 		"data_list",
-		"combobox"
+		"combobox",
+		"popup"
 	]
 }
