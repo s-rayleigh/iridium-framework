@@ -445,5 +445,5 @@ if(Iridium)
 }
 else
 {
-	console.error('Iridium Framework Core and Net must be included to be able to use Iridium Combobox.');
+	console.error('Iridium Framework Core must be included to be able to use Iridium Combobox.');
 }

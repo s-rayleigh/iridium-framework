@@ -1,4 +1,4 @@
-/*
+/**
  * Example for Iridium Animation.
  * This file is part of Iridium Framework project.
  *
