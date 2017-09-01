@@ -189,3 +189,57 @@ button:active
 	height: 100px;
 	background: red;
 }
+
+/**
+ * ===================================================================
+ *								POPUP
+ * ===================================================================
+ */
+
+.ir-pp-window
+{
+	background: white;
+}
+
+.ir-pp-header
+{
+	padding: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.ir-pp-content
+{
+	padding: 10px;
+}
+
+.ir-pp-buttons
+{
+	padding: 10px;
+	float: right;
+}
+
+.ir-pp-buttons button + button
+{
+	margin-left: 5px;
+}
+
+.ir-pp-close-btn
+{
+	position: absolute;
+	top: -42px;
+	right: -10px;
+	margin-left: 10px;
+	font-family: monospace;
+	font-size: 24px;
+	font-weight: normal;
+	background: none;
+	padding: 5px 10px;
+}
+
+.ir-pp-close-btn:hover
+{
+	color: white;
+	background: none;
+	box-shadow: none;
+}
