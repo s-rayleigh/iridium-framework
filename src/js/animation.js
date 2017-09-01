@@ -84,6 +84,7 @@ if(Iridium)
 		*/
 		function Animation(parameters)
 		{
+			// TODO: move to private properties
 			var params = {
 				animation: 'fadeIn',
 				direction: 'in',

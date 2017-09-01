@@ -41,6 +41,7 @@ if(Iridium)
 	/**
 	 * Iridium Net.
 	 * Contains methods for working with the network.
+	 * @namespace
 	 */
 	Iridium.Net = {};
 

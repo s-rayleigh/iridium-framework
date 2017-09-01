@@ -36,12 +36,13 @@ if(Iridium)
 	 * @param {string} [data.html] Element inner HTML.
 	 * @param {object.<function|function[]>} [data.on] Element events listeners.
 	 *
+	 * @param {object[]|HTMLElement[]} [data.childs] Child elements.
 	 *
-	 * @param {string} [data.method = post] Form method.
+	 * @param {string} [data.method=post] Form method.
 	 * @param {string} [data.action] Form action.
 	 *
 	 * @param {string} [data.name] Input name.
-	 * @param {string} [data.type = text] Input type.
+	 * @param {string} [data.type=text] Input type.
 	 * @param {*} [data.value] Input value.
 	 * @param {string} [data.pattern] Input pattern.
 	 * @param {string} [data.placeholder] Input placeholder.
