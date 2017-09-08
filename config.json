@@ -1,6 +1,7 @@
 {
 	"modules": [
 		"core",
+		"init",
 		"animation",
 		"builder",
 		"net",
@@ -9,6 +10,7 @@
 		"tooltip",
 		"data_list",
 		"combobox",
-		"popup"
+		"popup",
+		"tabs"
 	]
 }
