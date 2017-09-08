@@ -2,6 +2,7 @@
 	"modules": [
 		"core",
 		"init",
+		"url_data",
 		"animation",
 		"builder",
 		"net",
