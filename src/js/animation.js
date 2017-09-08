@@ -334,6 +334,7 @@ if(Iridium)
 					if(fractionTime < 1)
 					{
 						requestAnimationFrame(animationFrame);
+						return;
 					}
 					else if(_._repeats > 0)
 					{
@@ -341,9 +342,8 @@ if(Iridium)
 						_._repeats--;
 						_._onRepeat && _._onRepeat();
 						requestAnimationFrame(animationFrame);
+						return;
 					}
-
-					return;
 				}
 
 				_._started = false;
