@@ -43,19 +43,24 @@ if(Iridium)
 	{
 		/**
 		 * List of the callback functions for the initialization.
-		 * @type {InitCallback[]}
 		 */
-		var list = [];
+		var list = {};
 
 		/**
 		 * Registers callback function for the initialization.
+		 * @param {string} name Name of the module.
 		 * @param {InitCallback} callback Callback function for the initialization.
 		 */
-		Iridium.Init.register = function(callback)
+		Iridium.Init.register = function(name, callback)
 		{
-			if(typeof callback === 'function')
+			if(typeof name === 'string' && typeof callback === 'function')
 			{
-				list.push(callback);
+				if(list.hasOwnProperty(name))
+				{
+					throw new Error('Specified name is already in use.');
+				}
+
+				list[name] = callback;
 			}
 		};
 
@@ -64,24 +69,30 @@ if(Iridium)
 		 */
 		Iridium.Init.clear = function()
 		{
-			list.length = 0;
+			list = {};
 		};
 
 		/**
-		 * Launch initialization for specified element.
+		 * Launch initialization for specified element for the registered modules.
 		 * @param {HTMLElement} [element=document.body] Element for the initialization.
+		 * @param {string[]} [names] Names of the modules to initialize. If not specified, initialize all registered modules.
 		 */
-		Iridium.Init.launch = function(element)
+		Iridium.Init.launch = function(element, names)
 		{
 			if(!(element instanceof HTMLElement))
 			{
 				element = document.body;
 			}
 
-			list.forEach(function(callback)
+			for(var name in list)
 			{
-				callback(element);
-			});
+				if(Array.isArray(names) && !names.includes(name))
+				{
+					continue;
+				}
+
+				list[name](element);
+			}
 		};
 	}());
 
