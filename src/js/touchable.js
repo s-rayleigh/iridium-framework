@@ -23,17 +23,25 @@
  * @license LGPL-3.0+
  * @module touchable
  * @requires Iridium
+ * @requires Iridium.Init
  * @version 0.1-indev
  */
 
-window.addEventListener('load', function()
+if(Iridium && Iridium.Init)
 {
-	var elements = document.querySelectorAll('[data-touchable]');
-	for(var i = 0; i < elements.length; i++)
+	Iridium.Init.register(function(element)
 	{
-		elements[i].addEventListener('blur', function()
+		var elements = element.querySelectorAll('[data-touchable]');
+		for(var i = 0; i < elements.length; i++)
 		{
-			Iridium.addClass(this, 'touched');
-		});
-	}
-});
+			elements[i].addEventListener('blur', function()
+			{
+				Iridium.addClass(this, 'touched');
+			});
+		}
+	});
+}
+else
+{
+	console.error('Iridium Framework Core and Iridium Init must be included to be able to use Iridium Touchable.');
+}

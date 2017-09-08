@@ -20,13 +20,15 @@
  * @license LGPL-3.0+
  * @module tooltip
  * @requires Iridium
+ * @requires Iridium.Init
  * @version 0.1-indev
  */
 
-if(Iridium)
+if(Iridium && Iridium.Init)
 {
 	/**
-	 * @type {Array} Array of created tooltips for update its position on user scrolls the page.
+	 * Array of created tooltips for update its position on user scrolls the page.
+	 * @type {Iridium.Tooltip[]}
 	 */
 	var tooltipScroll = [];
 
@@ -93,7 +95,7 @@ if(Iridium)
 
 			tooltipElement.style.top = (e.pageY + params.margin) + 'px';
 			tooltipElement.style.left = (e.pageX + params.margin) + 'px';
-		}
+		};
 
 		function removeTooltipObject()
 		{
@@ -140,12 +142,12 @@ if(Iridium)
 			element.addEventListener('focus', createTooltipObject);
 			element.addEventListener('blur', removeTooltipObject);
 		}
-	}
+	};
 
-	//Initialization
-	window.addEventListener('load', function()
+	// Initialization
+	Iridium.Init.register(function(element)
 	{
-		var ttElements = document.querySelectorAll('[data-ir-tooltip]');
+		var ttElements = element.querySelectorAll('[data-ir-tooltip]');
 
 		for(var i = 0; i < ttElements.length; i++)
 		{
@@ -153,7 +155,7 @@ if(Iridium)
 		}
 	});
 
-	//Update position on page scroll
+	// Update position on page scroll
 	window.addEventListener('scroll', function()
 	{
 		for(var i = 0; i < tooltipScroll.length; i++)
@@ -164,5 +166,5 @@ if(Iridium)
 }
 else
 {
-	console.error('Iridium Framework Core must be included to be able to use Iridium Tooltip.');
+	console.error('Iridium Framework Core and Iridium Init must be included to be able to use Iridium Tooltip.');
 }
