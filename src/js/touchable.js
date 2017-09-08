@@ -29,7 +29,7 @@
 
 if(Iridium && Iridium.Init)
 {
-	Iridium.Init.register(function(element)
+	Iridium.Init.register('touchable', function(element)
 	{
 		var elements = element.querySelectorAll('[data-touchable]');
 		for(var i = 0; i < elements.length; i++)

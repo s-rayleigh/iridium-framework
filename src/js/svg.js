@@ -22,6 +22,7 @@
  * @license LGPL-3.0+
  * @module svg
  * @requires Iridium
+ * @requires Iridium.Init
  * @requires Iridium.Net
  * @version 0.1-indev
  */
@@ -32,7 +33,7 @@
  * @param {Node} svgNode Loaded svg.
  */
 
-if(Iridium && Iridium.Net)
+if(Iridium && Iridium.Init && Iridium.Net)
 {
 	/**
 	 * Iridium SVG.
@@ -101,13 +102,10 @@ if(Iridium && Iridium.Net)
 		});
 	};
 
-	/**
-	 * Loads all svg's from <img> tags with "data-inline-svg" attributes and replaces <img> with loaded <svg>.
-	 */
-	Iridium.SVG.loadOnPage = function()
+	Iridium.Init.register('inline-svg', function(element)
 	{
 		var i,
-			svgElements = document.querySelectorAll('[data-inline-svg]'),
+			svgElements = element.querySelectorAll('[data-inline-svg]'),
 			links       = []; // Links on svg's and corresponding elements
 
 		for(i = 0; i < svgElements.length; i++)
@@ -147,11 +145,9 @@ if(Iridium && Iridium.Net)
 				}
 			}.bind(links[i]));
 		}
-	};
-
-	window.addEventListener('load', Iridium.SVG.loadOnPage);
+	});
 }
 else
 {
-	console.error('Iridium Core and Iridium Net must be included to be able to use Iridium SVG.');
+	console.error('Iridium Core, Iridium Init and Iridium Net must be included to be able to use Iridium SVG.');
 }

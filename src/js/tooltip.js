@@ -145,7 +145,7 @@ if(Iridium && Iridium.Init)
 	};
 
 	// Initialization
-	Iridium.Init.register(function(element)
+	Iridium.Init.register('tooltip', function(element)
 	{
 		var ttElements = element.querySelectorAll('[data-ir-tooltip]');
 
