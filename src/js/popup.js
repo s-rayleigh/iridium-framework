@@ -39,6 +39,8 @@ if(Iridium && Iridium.Builder)
 		 *
 		 * @param {object} [parameters] Parameters of the popup window.
 		 *
+		 * @param {string} [parameters.windowClass] Class of the window element.
+		 *
 		 * @param {boolean} [parameters.overlay=true] Create overlay under the window.
 		 *
 		 * @param {boolean} [parameters.closeButton=false] Show close button.
@@ -143,6 +145,11 @@ if(Iridium && Iridium.Builder)
 				class: 'ir-pp-window',
 				childs: []
 			};
+
+			if(typeof this._params.windowClass === 'string')
+			{
+				windowStructure.class += ' ' + this._params.windowClass;
+			}
 
 			if(this._params.header)
 			{

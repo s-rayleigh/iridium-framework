@@ -26,6 +26,7 @@ window.addEventListener('load', function()
 	var popup = new Iridium.Popup({
 		header: 'Text of the header',
 		content: 'Text content',
+		windowClass: 'test-window',
 		buttonsClass: 'btn',
 		buttons: [
 			{
