@@ -51,6 +51,9 @@ if(Iridium && Iridium.Builder)
 		 * @param {string|HTMLElement} [parameters.buttons[].content] Content of the button.
 		 * @param {boolean} [parameters.buttons[].hide=true] Hide window on click.
 		 * @param {function} [parameters.buttons[].action] Action that done on click.
+		 * @param {string} [parameters.buttons[].class] Class of the button.
+		 *
+		 * @param {string} [parameters.buttonsClass] Common buttons class.
 		 *
 		 * @param {function} [parameters.onShow] Callback function that called on window show.
 		 * @param {function} [parameters.onHide] Callback function that called on window hide.
@@ -93,11 +96,12 @@ if(Iridium && Iridium.Builder)
 		/**
 		 * Adds button to the window.
 		 * @param {string|HTMLElement} content Content of the button.
-		 * @param {boolean} hide Hide window on click.
-		 * @param {function} action Action that done on click.
+		 * @param {boolean} [hide=true] Hide window on click.
+		 * @param {function} [action] Action that done on click.
+		 * @param {string} [className] Class of the button.
 		 * @returns {Iridium.Popup} Popup.
 		 */
-		Popup.prototype.addButton = function(content, hide, action)
+		Popup.prototype.addButton = function(content, hide, action, className)
 		{
 			if(!Array.isArray(this._params.buttons))
 			{
@@ -107,7 +111,8 @@ if(Iridium && Iridium.Builder)
 			this._params.buttons.push({
 				content: content,
 				hide: hide,
-				action: action
+				action: action,
+				class: className
 			});
 
 			return this;
@@ -211,9 +216,21 @@ if(Iridium && Iridium.Builder)
 
 				this._params.buttons.forEach(function(buttonData)
 				{
+					var buttonClass = 'ir-pp-btn';
+
+					if(typeof _._params.buttonsClass === 'string')
+					{
+						buttonClass += ' ' + _._params.buttonsClass;
+					}
+
+					if(typeof buttonData.class === 'string')
+					{
+						buttonClass += ' ' + buttonData.class;
+					}
+
 					var buttonStruct = {
 						tag: 'button',
-						class: 'ir-pp-btn',
+						class: buttonClass,
 						on: {
 							click: function(e)
 							{
