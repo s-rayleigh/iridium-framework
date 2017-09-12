@@ -26,10 +26,12 @@ window.addEventListener('load', function()
 	var popup = new Iridium.Popup({
 		header: 'Text of the header',
 		content: 'Text content',
+		buttonsClass: 'btn',
 		buttons: [
 			{
 				content: 'say hello',
 				hide: false,
+				class: 'btn-hide',
 				action: function()
 				{
 					alert('Hello!');
@@ -43,5 +45,5 @@ window.addEventListener('load', function()
 	document.getElementById('open-button').addEventListener('click', function()
 	{
 		popup.show();
-	})
+	});
 });
