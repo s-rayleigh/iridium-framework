@@ -72,7 +72,10 @@ gulp.task('min:css', () =>
 gulp.task('min:js', () =>
 {
 	return gulp.src(dist + 'modules/full/js/*.js')
-		.pipe(uglify())
+		.pipe(uglify().on('error', (e) =>
+		{
+			console.log(e);
+		}))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest(dist + 'modules/js'));
 });
