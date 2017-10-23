@@ -62,7 +62,7 @@ if(Iridium)
 	 * Also activates hints display on combobox click.
 	 *
 	 * @param {boolean} [parameters.button=false] Create button in combobox layout that shows hints on click.
-	 * @param {HTMLElement|string} [parameters.buttonContent] Content of the combobox button. Can be html element or
+	 * @param {Element|string} [parameters.buttonContent] Content of the combobox button. Can be html element or
 	 * raw html text that will be placed in innerHTML of the button.
 	 *
 	 * @param {boolean} [parameters.emptyInputHints=false] Display all hints from data if no text in the input field.
@@ -73,10 +73,10 @@ if(Iridium)
 	 * @param {ElementValueCallback} [parameters.mapElementValue] Callback function that returns value of the element.
 	 *
 	 * @param {object} [parameters.dataListParams] Parameters for the DataList usage.
-	 * @param {boolean} [parameters.autoload=true] Load DataList during combobox creation.
-	 * @param {boolean} [parameters.autoreload=false] Autoload DataList on text input.
-	 * @param {string} [parameters.filterFieldName] Name of the parameter of filter for the elements.
-	 * @param {string} [parameters.numberFieldName] Name of the parameter of elements number to load.
+	 * @param {boolean} [parameters.dataListParams.autoload=true] Load DataList during combobox creation.
+	 * @param {boolean} [parameters.dataListParams.autoreload=false] Autoload DataList on text input.
+	 * @param {string} [parameters.dataListParams.filterFieldName] Name of the parameter of filter for the elements.
+	 * @param {string} [parameters.dataListParams.numberFieldName] Name of the parameter of elements number to load.
 	 *
 	 * @return {HTMLElement} Combobox element.
 	 *
@@ -150,7 +150,7 @@ if(Iridium)
 		{
 			var button = document.createElement('button');
 
-			if(params.buttonContent instanceof HTMLElement)
+			if(params.buttonContent instanceof Element)
 			{
 				button.appendChild(params.buttonContent);
 			}
@@ -212,7 +212,11 @@ if(Iridium)
 
 					return result;
 				},
-				set: function(val) { field.value = val; }
+				set: function(val)
+				{
+					field.value = val;
+					field.dispatchEvent(new Event('input'));
+				}
 			},
 			'id': {
 				get: function() { return field.id; },
@@ -233,6 +237,9 @@ if(Iridium)
 			'required': {
 				get: function() { return field.required; },
 				set: function(val) { field.required = val; }
+			},
+			'inputElement': {
+				get: function() { return field; }
 			}
 		});
 
