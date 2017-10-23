@@ -56,7 +56,7 @@ if(Iridium && Iridium.Init)
 		params.content = params.content || element.dataset.irTooltip || 'Empty';
 		params.event = params.event || element.dataset.irTtEvent || 'hover';
 		params.position = params.position || element.dataset.irTtPos;
-		params.margin = params.margin || element.dataset.irMg || 10;
+		params.margin = params.margin || parseInt(element.dataset.irMg) || 10;
 		params.tooltipClass = params.tooltipClass || element.dataset.irTtClass;
 
 		this.updatePosition = function(e)
