@@ -143,7 +143,15 @@ if(Iridium && Iridium.Net)
 					move = 0;
 				}
 
-				data = resultData[params.resultMap.list];
+				if(resultData.hasOwnProperty(params.resultMap.list))
+				{
+					data = resultData[params.resultMap.list];
+				}
+				else
+				{
+					data = resultData;
+				}
+
 
 				// Array only!
 				if(!Array.isArray(data))
