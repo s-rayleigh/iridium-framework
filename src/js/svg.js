@@ -47,20 +47,39 @@ if(Iridium && Iridium.Init && Iridium.Net)
 	};
 
 	/**
+	 * Returns loaded svg.
+	 * @param url URL of the loaded svg.
+	 * @returns {Node|null} Loaded svg.
+	 */
+	Iridium.SVG.getLoaded = function(url)
+	{
+		for(var i = 0; i < Iridium.SVG.loaded.length; i++)
+		{
+			if(Iridium.SVG.loaded[i].link === url)
+			{
+				return Iridium.SVG.loaded[i].svg.cloneNode(true);
+			}
+		}
+
+		return null;
+	};
+
+	/**
 	 * Loads svg file from url as <svg> tag.
 	 * @param url URL of the svg file.
-	 * @param {SVGLoad} callback Callback function that accepts loaded svg.
+	 * @param {SVGLoad} [callback] Callback function that accepts loaded svg.
 	 */
 	Iridium.SVG.loadFromURL = function(url, callback)
 	{
-		var loaded = Iridium.SVG.loaded.find(function(s)
-		{
-			return s.link === url;
-		});
+		var loaded = this.getLoaded(url);
 
 		if(loaded)
 		{
-			callback(loaded.svg.cloneNode(true));
+			if(typeof callback === 'function')
+			{
+				callback(loaded.cloneNode(true));
+			}
+
 			return;
 		}
 
@@ -81,7 +100,11 @@ if(Iridium && Iridium.Init && Iridium.Net)
 				svg: svgNode
 			});
 
-			callback(svgNode.cloneNode(true));
+			if(typeof callback === 'function')
+			{
+				callback(svgNode.cloneNode(true));
+			}
+
 		}, Iridium.Net.DataType.XML);
 	};
 
@@ -114,10 +137,15 @@ if(Iridium && Iridium.Init && Iridium.Net)
 			{
 				var img     = svgElements[i],
 					link    = img.src,
-					linkObj = links.find(function(lo)
+					linkObj;
+
+				for(var j = 0; j < links.length; j++)
+				{
+					if(links[j].link === link)
 					{
-						return lo.link === link;
-					});
+						linkObj = links[j];
+					}
+				}
 
 				if(linkObj)
 				{
