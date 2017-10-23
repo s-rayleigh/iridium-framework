@@ -32,11 +32,12 @@ if(Iridium)
 	 * @param {object} data Element data.
 	 * @param {string} [data.tag = div] Element tag.
 	 * @param {string} [data.id] Element identifier.
-	 * @param {string} [data.class] Element class.
+	 * @param {string|string[]} [data.class] Element class.
 	 * @param {string} [data.html] Element inner HTML.
+	 * @param {string|string[]} [data.bool] Boolean attributes.
 	 * @param {object.<function|function[]>} [data.on] Element events listeners.
 	 *
-	 * @param {object[]|HTMLElement[]} [data.childs] Child elements.
+	 * @param {object[]|Element[]} [data.childs] Child elements.
 	 *
 	 * @param {string} [data.method=post] Form method.
 	 * @param {string} [data.action] Form action.
@@ -87,6 +88,22 @@ if(Iridium)
 				if(typeof elementData.html === 'string')
 				{
 					element.innerHTML = elementData.html;
+				}
+
+				// Boolean attributes
+				if(typeof elementData.bool === 'string')
+				{
+					element.setAttribute(elementData.bool, elementData.bool);
+				}
+				else if(Array.isArray(elementData.bool))
+				{
+					elementData.bool.forEach(function(b)
+					{
+						if(typeof b === 'string')
+						{
+							element.setAttribute(b, b);
+						}
+					});
 				}
 
 				//Form attributes
@@ -185,7 +202,7 @@ if(Iridium)
 					}
 				}
 
-				//Element childs (recursive, object or HTMLElement)
+				//Element childs (recursive, object or Element)
 				if(Array.isArray(elementData.childs))
 				{
 					elementData.childs.forEach(function(childData)
@@ -195,7 +212,7 @@ if(Iridium)
 							return;
 						}
 
-						element.appendChild(childData instanceof HTMLElement ? childData : buildElement(childData));
+						element.appendChild(childData instanceof Element ? childData : buildElement(childData));
 					});
 				}
 
