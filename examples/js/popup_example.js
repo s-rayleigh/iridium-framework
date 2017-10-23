@@ -31,7 +31,7 @@ window.addEventListener('load', function()
 		buttons: [
 			{
 				content: 'say hello',
-				hide: false,
+				close: false,
 				class: 'btn-hide',
 				action: function()
 				{
