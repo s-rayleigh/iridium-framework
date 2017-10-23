@@ -360,11 +360,6 @@ if(!String.prototype.endsWith)
 
 if(!Array.prototype.includes)
 {
-	/**
-	 * Определяет, содержит ли массив определённый элемент, возвращая в зависимости от этого true или false.
-	 * @param {*} searchElement Искомый элемент
-	 * @returns {boolean}
-	 */
 	Array.prototype.includes = function(searchElement)
 	{
 		return this.indexOf(searchElement) !== -1;
