@@ -39,19 +39,21 @@ if(Iridium && Iridium.Builder)
 		 *
 		 * @param {object} [parameters] Parameters of the popup window.
 		 *
+		 * @param {boolean} [parameters.remove=true] Remove popup layout on close.
+		 *
 		 * @param {string} [parameters.windowClass] Class of the window element.
 		 *
 		 * @param {boolean} [parameters.overlay=true] Create overlay under the window.
 		 *
 		 * @param {boolean} [parameters.closeButton=false] Show close button.
-		 * @param {string|HTMLElement} [parameters.closeButtonContent=X] Content of the close button.
+		 * @param {string|Element} [parameters.closeButtonContent=X] Content of the close button.
 		 *
-		 * @param {string|HTMLElement} [parameters.header] Content of the window header.
-		 * @param {string|HTMLElement} [parameters.content] Content of the window.
+		 * @param {string|Element} [parameters.header] Content of the window header.
+		 * @param {string|Element} [parameters.content] Content of the window.
 		 *
 		 * @param {object[]} [parameters.buttons] Buttons data.
-		 * @param {string|HTMLElement} [parameters.buttons[].content] Content of the button.
-		 * @param {boolean} [parameters.buttons[].hide=true] Hide window on click.
+		 * @param {string|Element} [parameters.buttons[].content] Content of the button.
+		 * @param {boolean} [parameters.buttons[].close=true] Close window on click.
 		 * @param {function} [parameters.buttons[].action] Action that done on click.
 		 * @param {string} [parameters.buttons[].class] Class of the button.
 		 *
@@ -65,6 +67,7 @@ if(Iridium && Iridium.Builder)
 		function Popup(parameters)
 		{
 			this._params = {
+				remove: true,
 				overlay: true,
 				closeButton: false,
 				closeButtonContent: 'X'
@@ -75,7 +78,7 @@ if(Iridium && Iridium.Builder)
 
 		/**
 		 * Sets text of the header.
-		 * @param {string|HTMLElement} header Text of the header.
+		 * @param {string|Element} header Text of the header.
 		 * @return {Iridium.Popup} Popup.
 		 */
 		Popup.prototype.setHeader = function(header)
@@ -86,7 +89,7 @@ if(Iridium && Iridium.Builder)
 
 		/**
 		 * Sets content of the window.
-		 * @param {string|HTMLElement} content Content.
+		 * @param {string|Element} content Content.
 		 * @returns {Iridium.Popup} Popup.
 		 */
 		Popup.prototype.setContent = function(content)
@@ -97,13 +100,13 @@ if(Iridium && Iridium.Builder)
 
 		/**
 		 * Adds button to the window.
-		 * @param {string|HTMLElement} content Content of the button.
-		 * @param {boolean} [hide=true] Hide window on click.
+		 * @param {string|Element} content Content of the button.
+		 * @param {boolean} [close=true] Close window on click.
 		 * @param {function} [action] Action that done on click.
 		 * @param {string} [className] Class of the button.
 		 * @returns {Iridium.Popup} Popup.
 		 */
-		Popup.prototype.addButton = function(content, hide, action, className)
+		Popup.prototype.addButton = function(content, close, action, className)
 		{
 			if(!Array.isArray(this._params.buttons))
 			{
@@ -112,7 +115,7 @@ if(Iridium && Iridium.Builder)
 
 			this._params.buttons.push({
 				content: content,
-				hide: hide,
+				close: close,
 				action: action,
 				class: className
 			});
@@ -137,7 +140,7 @@ if(Iridium && Iridium.Builder)
 			{
 				structure.childs.push({
 					class: 'ir-pp-overlay',
-					on: { click: function() { _.hide(); } }
+					on: { click: function() { _.close(); } }
 				});
 			}
 
@@ -163,7 +166,7 @@ if(Iridium && Iridium.Builder)
 					headerStruct.html = this._params.header;
 				}
 
-				if(this._params.header instanceof HTMLElement)
+				if(this._params.header instanceof Element)
 				{
 					headerStruct.childs.push(this._params.header);
 				}
@@ -176,7 +179,7 @@ if(Iridium && Iridium.Builder)
 						on: {
 							click: function()
 							{
-								_.hide();
+								_.close();
 							}
 						}
 					};
@@ -186,7 +189,7 @@ if(Iridium && Iridium.Builder)
 						closeButtonStruct.html = this._params.closeButtonContent;
 					}
 
-					if(this._params.closeButtonContent instanceof HTMLElement)
+					if(this._params.closeButtonContent instanceof Element)
 					{
 						closeButtonStruct.childs = [this._params.closeButtonContent];
 					}
@@ -206,7 +209,7 @@ if(Iridium && Iridium.Builder)
 					contentStructure.html = this._params.content;
 				}
 
-				if(this._params.content instanceof HTMLElement)
+				if(this._params.content instanceof Element)
 				{
 					contentStructure.childs = [this._params.content];
 				}
@@ -249,9 +252,9 @@ if(Iridium && Iridium.Builder)
 									buttonData.action();
 								}
 
-								if(buttonData.hide === undefined || buttonData.hide)
+								if(buttonData.close === undefined || buttonData.close)
 								{
-									_.hide();
+									_.close();
 								}
 							}
 						}
@@ -261,7 +264,7 @@ if(Iridium && Iridium.Builder)
 					{
 						buttonStruct.html = buttonData.content;
 					}
-					else if(buttonData.content instanceof HTMLElement)
+					else if(buttonData.content instanceof Element)
 					{
 						buttonStruct.childs.push(buttonData.content);
 					}
@@ -365,7 +368,7 @@ if(Iridium && Iridium.Builder)
 		};
 
 		/**
-		 * Removes window (if it created) from the body.
+		 * Removes window (if it created) from the body of the document.
 		 * @returns {Iridium.Popup} Popup.
 		 * @see Iridium.Popup.isCreated
 		 */
@@ -379,6 +382,15 @@ if(Iridium && Iridium.Builder)
 			document.body.removeChild(this._element);
 
 			return this;
+		};
+
+		/**
+		 * Removes or hides window.
+		 * @returns {Iridium.Popup} Popup.
+		 */
+		Popup.prototype.close = function()
+		{
+			return this._params.remove ? this.remove() : this.hide();
 		};
 
 		/**
