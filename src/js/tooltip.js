@@ -21,10 +21,11 @@
  * @module tooltip
  * @requires Iridium
  * @requires Iridium.Init
+ * @requires Iridium.Breakpoints
  * @version 0.1-indev
  */
 
-if(Iridium && Iridium.Init)
+if(Iridium && Iridium.Init && Iridium.Breakpoints)
 {
 	Iridium.Tooltip = (function()
 	{
@@ -365,5 +366,5 @@ if(Iridium && Iridium.Init)
 }
 else
 {
-	console.error('Iridium Framework Core and Iridium Init must be included to be able to use Iridium Tooltip.');
+	console.error('Iridium Framework Core, Iridium Breakpoints and Iridium Init should be included to be able to use Iridium Tooltip.');
 }
