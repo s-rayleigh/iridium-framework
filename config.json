@@ -2,6 +2,7 @@
 	"modules": [
 		"core",
 		"init",
+		"breakpoints",
 		"url_data",
 		"animation",
 		"builder",
