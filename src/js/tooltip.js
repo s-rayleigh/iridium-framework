@@ -26,141 +26,340 @@
 
 if(Iridium && Iridium.Init)
 {
-	/**
-	 * Array of created tooltips for update its position on user scrolls the page.
-	 * @type {Iridium.Tooltip[]}
-	 */
-	var tooltipScroll = [];
-
-	/**
-	 * Creates Iridium Tooltip.
-	 * @param {HTMLElement} element
-	 * @param {object} [params]
-	 * @param {string} [params.content]
-	 * @param {('hover'|'focus')} [params.event = 'hover']
-	 * @param {('top'|'right'|'bottom'|'left')} [params.position]
-	 * @param {string} [params.tooltipClass]
-	 * @constructor
-	 */
-	Iridium.Tooltip = function(element, params)
+	Iridium.Tooltip = (function()
 	{
-		var tooltipElement,
-			_ = this;
+		/**
+		 * List of the all tooltips.
+		 * @type {Array}
+		 * @private
+		 */
+		var list = [];
 
-		if(!(element instanceof HTMLElement))
+		/**
+		 * Creates Iridium Tooltip.
+		 *
+		 * @param {object} params
+		 * @param {HTMLElement} params.element
+		 * @param {string} [params.content=Empty]
+		 * @param {('hover'|'focus')} [params.event = 'hover']
+		 * @param {('top'|'right'|'bottom'|'left'|'mouse')} [params.position=mouse]
+		 * @param {int} [params.margin=10]
+		 * @param {string} [params.tooltipClass]
+		 *
+		 * @param {object} [params.responsive]
+		 *
+		 * @param {object} [params.responsive.sm]
+		 * @param {('hover'|'focus')} [params.responsive.sm.event]
+		 * @param {('top'|'right'|'bottom'|'left'|'mouse')} [params.responsive.sm.position]
+		 * @param {int} [params.responsive.sm.margin=10]
+		 *
+		 * @param {object} [params.responsive.md]
+		 * @param {('hover'|'focus')} [params.responsive.md.event]
+		 * @param {('top'|'right'|'bottom'|'left'|'mouse')} [params.responsive.md.position]
+		 * @param {int} [params.responsive.md.margin=10]
+		 *
+		 * @param {object} [params.responsive.lg]
+		 * @param {('hover'|'focus')} [params.responsive.lg.event]
+		 * @param {('top'|'right'|'bottom'|'left'|'mouse')} [params.responsive.lg.position]
+		 * @param {int} [params.responsive.lg.margin=10]
+		 *
+		 * @param {object} [params.responsive.xs]
+		 * @param {('hover'|'focus')} [params.responsive.xs.event]
+		 * @param {('top'|'right'|'bottom'|'left'|'mouse')} [params.responsive.xs.position]
+		 * @param {int} [params.responsive.xs.margin=10]
+		 *
+		 * @constructor
+		 */
+		function Tooltip(params)
 		{
-			throw new Error('Argument "element" must be HTMLElement.');
+			var _ = this;
+
+			if(!(params.element instanceof HTMLElement))
+			{
+				throw new Error('Parameter element should be instance of HTMLElement.');
+			}
+
+			_._params = {
+				content: 'Empty',
+				event: 'hover',
+				position: 'mouse',
+				margin: 10
+			};
+
+			Iridium.merge(_._params, params);
+			this._currentParams = this._getCurrentParams();
+
+			// Tooltip element creation
+			_._element = document.createElement('div');
+			_._element.innerHTML = _._params.content;
+			_._updateTooltipElement();
+
+			params.element.addEventListener('mouseenter', function()
+			{
+				if(_._currentParams.event === 'hover')
+				{
+					_.show();
+				}
+			});
+
+			params.element.addEventListener('mousemove', function(e)
+			{
+				if(_._currentParams.event === 'hover')
+				{
+					_._updatePosition(e);
+				}
+			});
+
+			params.element.addEventListener('mouseleave', function()
+			{
+				if(_._currentParams.event === 'hover')
+				{
+					_.hide();
+				}
+			});
+
+			params.element.addEventListener('click', function()
+			{
+				if(_._currentParams.event === 'hover')
+				{
+					_.hide();
+				}
+			});
+
+			params.element.addEventListener('focus', function()
+			{
+				if(_._currentParams.event === 'focus')
+				{
+					_.show();
+					_._updatePosition();
+				}
+			});
+
+			params.element.addEventListener('blur', function()
+			{
+				if(_._currentParams.event === 'focus')
+				{
+					_.hide();
+				}
+			});
+
+			list.push(_);
 		}
 
-		params = params || {};
-		params.content = params.content || element.dataset.irTooltip || 'Empty';
-		params.event = params.event || element.dataset.irTtEvent || 'hover';
-		params.position = params.position || element.dataset.irTtPos;
-		params.margin = params.margin || parseInt(element.dataset.irMg) || 10;
-		params.tooltipClass = params.tooltipClass || element.dataset.irTtClass;
-
-		this.updatePosition = function(e)
+		/**
+		 * Updates current position of the tooltip object.
+		 * @param e Event data.
+		 * @private
+		 */
+		Tooltip.prototype._updatePosition = function(e)
 		{
-			if(params.position !== undefined)
+			var params = this._currentParams;
+
+			if(params.position !== 'mouse' && !!params.position)
 			{
-				var elementRect = element.getBoundingClientRect(),
+				var elementRect = params.element.getBoundingClientRect(),
 					top         = elementRect.top,
 					left        = elementRect.left;
 
 				switch(params.position)
 				{
 					case 'top':
-						top -= tooltipElement.offsetHeight + params.margin;
-						left += (element.offsetWidth - tooltipElement.offsetWidth) / 2;
+						top -= this._element.offsetHeight + params.margin;
+						left += (params.element.offsetWidth - this._element.offsetWidth) / 2;
 						break;
 					case 'bottom':
-						top += element.offsetHeight + params.margin;
-						left += (element.offsetWidth - tooltipElement.offsetWidth) / 2;
+						top += params.element.offsetHeight + params.margin;
+						left += (params.element.offsetWidth - this._element.offsetWidth) / 2;
 						break;
 					case 'left':
-						left -= tooltipElement.offsetWidth + params.margin;
-						top += (element.offsetHeight - tooltipElement.offsetHeight) / 2;
+						left -= this._element.offsetWidth + params.margin;
+						top += (params.element.offsetHeight - this._element.offsetHeight) / 2;
 						break;
 					case 'right':
-						left += element.offsetWidth + params.margin;
-						top += (element.offsetHeight - tooltipElement.offsetHeight) / 2;
+						left += params.element.offsetWidth + params.margin;
+						top += (params.element.offsetHeight - this._element.offsetHeight) / 2;
 						break;
 				}
 
-				tooltipElement.style.top  = Math.round(top) + 'px';
-				tooltipElement.style.left = Math.round(left) + 'px';
+				this._element.style.top  = Math.round(top) + 'px';
+				this._element.style.left = Math.round(left) + 'px';
 
 				return;
 			}
 
-			tooltipElement.style.top = (e.pageY + params.margin) + 'px';
-			tooltipElement.style.left = (e.pageX + params.margin) + 'px';
+			this._element.style.top  = (e.pageY + params.margin) + 'px';
+			this._element.style.left = (e.pageX + params.margin) + 'px';
 		};
 
-		function removeTooltipObject()
+		Tooltip.prototype._updateTooltipElement = function()
 		{
-			if(document.body.contains(tooltipElement))
-			{
-				document.body.removeChild(tooltipElement);
-			}
+			this._element.className = 'ir-tooltip-obj'
+				+ (this._currentParams.position ? ' ' + this._currentParams.position : '')
+				+ (this._params.tooltipClass ? ' ' + this._params.tooltipClass : '');
+		};
 
-			if(params.event === 'focus')
+		/**
+		 * Returns parameters for current responsive breakpoint.
+		 * @returns {object} Parameters.
+		 * @private
+		 */
+		Tooltip.prototype._getCurrentParams = function()
+		{
+			var params = Iridium.clone(this._params),
+				breakpoints = Iridium.Breakpoints.getNames(),
+				currentBreakpoint = Iridium.Breakpoints.getCurrent();
+			delete params.responsive;
+
+			if(currentBreakpoint && this._params.responsive)
 			{
-				var index = tooltipScroll.indexOf(_);
-				if(index !== -1)
+				for(var i = 0; i < breakpoints.length; i++)
 				{
-					tooltipScroll.splice(index, 1);
+					var bp = breakpoints[i];
+					Iridium.merge(params, this._params.responsive[bp]);
+
+					if(bp === currentBreakpoint)
+					{
+						break;
+					}
 				}
 			}
-		}
 
-		function createTooltipObject(e)
+			return params;
+		};
+
+		/**
+		 * Displays tooltip.
+		 */
+		Tooltip.prototype.show = function()
 		{
-			tooltipElement = document.createElement('div');
-			tooltipElement.className = 'ir-tooltip-obj'
-				+ (params.position ? ' ' + params.position : '')
-				+ (params.tooltipClass ? ' ' + params.tooltipClass : '');
-			tooltipElement.innerHTML = params.content;
-			document.body.appendChild(tooltipElement);
-			_.updatePosition(e);
-
-			if(params.event === 'focus')
+			if(!document.body.contains(this._element))
 			{
-				tooltipScroll.push(_);
+				document.body.appendChild(this._element);
 			}
-		}
+		};
 
-		if(params.event === 'hover')
+		/**
+		 * Hides tooltip.
+		 */
+		Tooltip.prototype.hide = function()
 		{
-			element.addEventListener('mouseenter', createTooltipObject);
-			element.addEventListener('mousemove', this.updatePosition);
-			element.addEventListener('mouseleave', removeTooltipObject);
-			element.addEventListener('click', removeTooltipObject);
-		}
-		else if(params.event === 'focus')
+			if(document.body.contains(this._element))
+			{
+				document.body.removeChild(this._element);
+			}
+		};
+
+		/**
+		 * @returns {boolean} True if tooltip is visible.
+		 */
+		Tooltip.prototype.isVisible = function()
 		{
-			element.addEventListener('focus', createTooltipObject);
-			element.addEventListener('blur', removeTooltipObject);
-		}
-	};
+			return document.body.contains(this._element);
+		};
+
+		/**
+		 * Called on window resize event.
+		 * @private
+		 */
+		Tooltip.prototype._onWindowResize = function()
+		{
+			if(this._currentParams.event === 'focus')
+			{
+				this._updatePosition();
+			}
+
+			this._currentParams = this._getCurrentParams();
+		};
+
+		/**
+		 * Called on window scroll event.
+		 * @private
+		 */
+		Tooltip.prototype._onWindowScroll = function()
+		{
+			if(this._currentParams.event === 'focus')
+			{
+				this._updatePosition();
+			}
+		};
+
+		/**
+		 * Called on breakpoint change.
+		 * @private
+		 */
+		Tooltip.prototype._onBreakpointChange = function()
+		{
+			this._currentParams = this._getCurrentParams();
+			this._updateTooltipElement();
+		};
+
+		window.addEventListener('scroll', function(e)
+		{
+			for(var i = 0; i < list.length; i++)
+			{
+				list[i]._onWindowScroll(e);
+			}
+		});
+
+		window.addEventListener('resize', function(e)
+		{
+			for(var i = 0; i < list.length; i++)
+			{
+				list[i]._onWindowResize(e);
+			}
+		});
+
+		Iridium.Breakpoints.addOnChange(function()
+		{
+			for(var i = 0; i < list.length; i++)
+			{
+				list[i]._onBreakpointChange();
+			}
+		});
+
+		return Tooltip;
+	}());
 
 	// Initialization
 	Iridium.Init.register('tooltip', function(element)
 	{
-		var ttElements = element.querySelectorAll('[data-ir-tooltip]');
+		var ttElements = element.querySelectorAll('[data-ir-tt]');
 
 		for(var i = 0; i < ttElements.length; i++)
 		{
-			new Iridium.Tooltip(ttElements[i]);
-		}
-	});
+			var tt = ttElements[i],
+				params = {
+					element: tt,
+					content: tt.dataset.irTt,
+					event: tt.dataset.irTtEvent,
+					position: tt.dataset.irTtPos,
+					margin: tt.dataset.irTtMg,
+					tooltipClass: tt.dataset.irTtClass,
+					responsive: {
+						sm: {
+							event: tt.dataset.irTtSmEvent,
+							position: tt.dataset.irTtSmPos,
+							margin: tt.dataset.irTtSmMg
+						},
+						md: {
+							event: tt.dataset.irTtMdEvent,
+							position: tt.dataset.irTtMdPos,
+							margin: tt.dataset.irTtMdMg
+						},
+						lg: {
+							event: tt.dataset.irTtLgEvent,
+							position: tt.dataset.irTtLgPos,
+							margin: tt.dataset.irTtLgMg
+						},
+						xl: {
+							event: tt.dataset.irTtXlEvent,
+							position: tt.dataset.irTtXlPos,
+							margin: tt.dataset.irTtXlMg
+						}
+					}
+				};
 
-	// Update position on page scroll
-	window.addEventListener('scroll', function()
-	{
-		for(var i = 0; i < tooltipScroll.length; i++)
-		{
-			tooltipScroll[i].updatePosition();
+			new Iridium.Tooltip(params);
 		}
 	});
 }
