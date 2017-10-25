@@ -272,6 +272,12 @@ Iridium.clone = function(obj)
 		return copy;
 	}
 
+	// Do not clone Node, just copy the reference
+	if(obj instanceof Node)
+	{
+		return obj;
+	}
+
 	if(obj instanceof Object)
 	{
 		copy = {};
