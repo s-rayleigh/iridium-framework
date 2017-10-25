@@ -290,22 +290,25 @@ Iridium.clone = function(obj)
 	throw new Error("Cannot clone the object. Unsupported type.");
 }
 
-/**
- * Добавляет в массив элементы переданного массива без создания нового массива
- * @param {Array} array Массив элементов, которые необходимо добавить
- */
-Array.prototype.pushArray = function(array)
-{
-	if(!Array.isArray(array))
+Object.defineProperty(
+	Array.prototype,
+	'pushArray',
 	{
-		throw new TypeError('Argument must be an array.');
-	}
+		value: function(array)
+		{
+			if(!Array.isArray(array))
+			{
+				throw new TypeError('Argument must be an array.');
+			}
 
-	for(var i = 0; i < array.length; i++)
-	{
-		this.push(array[i]);
+			for(var i = 0; i < array.length; i++)
+			{
+				this.push(array[i]);
+			}
+		},
+		enumerable: false
 	}
-};
+)
 
 /**
  * Преобразовывает кол-во байт в сокращенный вариант с двоичными приставками МЭК.
