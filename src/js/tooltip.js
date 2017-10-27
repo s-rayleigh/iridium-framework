@@ -155,6 +155,7 @@ if(Iridium && Iridium.Init && Iridium.Breakpoints)
 		Tooltip.prototype._updatePosition = function(e)
 		{
 			var params = this._currentParams;
+			params.margin = parseInt(params.margin);
 
 			if(params.position !== 'mouse' && !!params.position)
 			{
