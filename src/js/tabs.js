@@ -21,18 +21,33 @@
  * @module tabs
  * @requires Iridium
  * @requires Iridium.Init
+ * @requires Iridium.UrlData
  * @version 0.1-indev
  */
 
-if(Iridium)
+if(Iridium && Iridium.Init && Iridium.UrlData)
 {
 	Iridium.Tabs = (function()
 	{
-		/**
-		 * Counter for the tabs elements on the page.
-		 * @type {number}
-		 */
-		var tabsCount = 0;
+
+		var
+			/**
+			 * Counter for the tabs elements on the page.
+			 * @type {number}
+			 */
+			tabsCount = 0,
+
+			/**
+			 * List of the initialized tabs.
+			 * @type {Array}
+			 */
+			tabs = [],
+
+			/**
+			 * Unique tabs names.
+			 * @type {Array}
+			 */
+			names = [];
 
 		/**
 		 * Iridium Tabs.
@@ -49,6 +64,7 @@ if(Iridium)
 		function Tabs(params)
 		{
 			var _ = this;
+
 			_._params = {
 				defaultTab: 0,
 				useUrl: true,
@@ -67,6 +83,16 @@ if(Iridium)
 				throw new Error('Parameter "tabs" should be an array with elements.');
 			}
 
+			if(_._params.name)
+			{
+				if(names.indexOf(_._params.name) !== -1)
+				{
+					throw new Error('Tabs name already taken by another tabs.');
+				}
+
+				names.push(_._params.name);
+			}
+
 			/**
 			 * Number of the tabs element on the page.
 			 * @type {number}
@@ -74,9 +100,16 @@ if(Iridium)
 			 */
 			_._tabsNum = tabsCount++;
 
-			if(_._params.useUrl && Iridium.UrlData.has(_._params.urlKeyName + _._tabsNum))
+			/**
+			 * Unique name of the tabs.
+			 * @type {string}
+			 * @private
+			 */
+			_._tabsName = _._params.name ? _._params.name : _._params.urlKeyName + _._tabsNum;
+
+			if(_._params.useUrl && Iridium.UrlData.has(_._tabsName))
 			{
-				_.show(parseInt(Iridium.UrlData.get(_._params.urlKeyName + _._tabsNum)));
+				_.show(parseInt(Iridium.UrlData.get(_._tabsName)));
 			}
 			else
 			{
@@ -99,6 +132,8 @@ if(Iridium)
 					}(i));
 				}
 			}
+
+			tabs.push(_);
 		}
 
 		/**
@@ -144,7 +179,7 @@ if(Iridium)
 
 					if(this._params.useUrl)
 					{
-						Iridium.UrlData.set(this._params.urlKeyName + this._tabsNum, i+'');
+						Iridium.UrlData.set(this._tabsName, i+'');
 					}
 
 					opened = true;
@@ -158,9 +193,68 @@ if(Iridium)
 			return opened;
 		};
 
-		// Initialization
-		Iridium.Init.register('tabs', function(element)
+		/**
+		 * Updates current tab to correspond specified index in the url (uses UrlData module).
+		 */
+		Tabs.prototype.update = function()
 		{
+			if(Iridium.UrlData.has(this._tabsName))
+			{
+				this.show(parseInt(Iridium.UrlData.get(this._tabsName)));
+			}
+		};
+
+		/**
+		 * List of the initialized tabs.
+		 * @property {Tabs[]} list
+		 * @memberOf Tabs
+		 * @readonly
+		 * @static
+		 */
+		Object.defineProperty(Tabs, 'list', {
+			enumerable: false,
+			get: function()
+			{
+				// Return copy
+				return tabs.slice();
+			}
+		});
+
+		/**
+		 * Finds and returns tabs by the unique name.
+		 * @param {string} name Name of the tabs.
+		 * @returns {Tabs|null}
+		 * @static
+		 */
+		Tabs.getByName = function(name)
+		{
+			for(var i = 0; i < tabs.length; i++)
+			{
+				if(tabs[i]._tabsName && tabs[i]._tabsName === name)
+				{
+					return tabs[i];
+				}
+			}
+
+			return null;
+		};
+
+		/**
+		 * Updates all tabs to correspond specified index in the url (uses UrlData module).
+		 * @static
+		 */
+		Tabs.update = function()
+		{
+			this.list.forEach(function(t) { t.update(); });
+		};
+
+		// Initialization
+		Iridium.Init.register('ir-tabs', function(element)
+		{
+			tabsCount = 0;
+			tabs.length = 0;
+			names.length = 0;
+
 			var tabsElements = element.querySelectorAll('[data-ir-tabs]');
 
 			for(var i = 0; i < tabsElements.length; i++)
@@ -177,7 +271,8 @@ if(Iridium)
 
 				new Tabs({
 					buttons: Array.prototype.slice.call(buttons),
-					tabs: Array.prototype.slice.call(container.children)
+					tabs: Array.prototype.slice.call(container.children),
+					name: te.dataset.irTabsName
 				});
 			}
 		});
@@ -187,5 +282,5 @@ if(Iridium)
 }
 else
 {
-	console.error('Iridium Framework Core and Iridium Init should be included to be able to use Iridium Tabs.');
+	console.error('Iridium Framework Core, Iridium Init and Iridium UrlData should be included to be able to use Iridium Tabs.');
 }
