@@ -168,6 +168,16 @@ if(Iridium)
 					{
 						element.checked = elementData.checked;
 					}
+
+					if(typeof elementData.size === 'number')
+					{
+						element.size = elementData.size;
+					}
+
+					if(typeof elementData.maxlength === 'number')
+					{
+						element.maxlength = elementData.maxlength;
+					}
 				}
 
 				if(elementData.tag === 'label' && typeof elementData.for === 'string')
