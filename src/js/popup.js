@@ -28,11 +28,19 @@ if(Iridium && Iridium.Builder)
 {
 	Iridium.Popup = (function()
 	{
-		/**
-		 * List of the visible popup windows.
-		 * @type {Iridium.Popup[]}
-		 */
-		var list = [];
+
+		var
+			/**
+			 * List of the visible popup windows.
+			 * @type {Iridium.Popup[]}
+			 */
+			list = [],
+
+			/**
+			 * Name of the class that will be added to the body element if window is visible.
+			 * @type {string}
+			 */
+			bodyClass = 'ir-pp-active';
 
 		/**
 		 * Iridium Popup.
@@ -332,11 +340,32 @@ if(Iridium && Iridium.Builder)
 				this._params.onShow();
 			}
 
+			Iridium.addClass(document.body, bodyClass);
+
 			this._element.style.display = '';
 			this.updatePosition();
 			list.push(this);
 
 			return this;
+		};
+
+		Popup.prototype._onHide = function()
+		{
+			if(typeof this._params.onHide === 'function')
+			{
+				this._params.onHide();
+			}
+
+			if(list.length === 1)
+			{
+				Iridium.removeClass(document.body, bodyClass);
+			}
+
+			var i = list.indexOf(this);
+			if(i > -1)
+			{
+				list.splice(i, 1);
+			}
 		};
 
 		/**
@@ -351,18 +380,8 @@ if(Iridium && Iridium.Builder)
 				return this;
 			}
 
-			if(typeof this._params.onHide === 'function')
-			{
-				this._params.onHide();
-			}
-
 			this._element.style.display = 'none';
-
-			var i = list.indexOf(this);
-			if(i > -1)
-			{
-				list.splice(i, 1);
-			}
+			this._onHide();
 
 			return this;
 		};
@@ -379,6 +398,7 @@ if(Iridium && Iridium.Builder)
 				return this;
 			}
 
+			this._onHide();
 			document.body.removeChild(this._element);
 
 			return this;
