@@ -116,6 +116,16 @@ Iridium.removeClass = function(element, className)
 }
 
 /**
+ * Toggles class on the element.
+ * @param {HTMLElement} element Element.
+ * @param {string} className Class name.
+ */
+Iridium.toggleClass = function(element, className)
+{
+	Iridium.hasClass(element, className) ? Iridium.removeClass(element, className) : Iridium.addClass(element, className);
+};
+
+/**
  * Returns value of the element style.
  * @param {HTMLElement} element Element.
  * @param {string} styleName Name of the style.
