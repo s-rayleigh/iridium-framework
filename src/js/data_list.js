@@ -152,7 +152,6 @@ if(Iridium && Iridium.Net)
 					data = resultData;
 				}
 
-
 				// Array only!
 				if(!Array.isArray(data))
 				{

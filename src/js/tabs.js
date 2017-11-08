@@ -58,6 +58,7 @@ if(Iridium && Iridium.Init && Iridium.UrlData)
 		 * @param {int} [params.defaultTab=0] Number of the default tab.
 		 * @param {boolean} [params.useUrl=true] Use URL to save number of the active tab.
 		 * @param {string} [params.urlKeyName=tab_] Name of the key that is used to store number of the active tab in the url.
+		 * @param {string} [params.name] Unique name of the tabs that is used to store number of the active tab in the url. It will replace urlKeyName parameter.
 		 *
 		 * @constructor
 		 */
