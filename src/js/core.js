@@ -45,7 +45,7 @@ Iridium.randomId = function(length)
 	}
 
 	return result;
-}
+};
 
 /**
  * Проверяет входит-ли подстрока в строку
@@ -56,7 +56,7 @@ Iridium.randomId = function(length)
 Iridium.stringContains = function(needle, haystack)
 {
 	return haystack.indexOf(needle) > -1;
-}
+};
 
 /**
  * Checks if the element has specified class.
@@ -68,7 +68,7 @@ Iridium.hasClass = function(element, className)
 {
 	if(!element.className) { return false; }
 	return element.className.split(' ').indexOf(className) > -1;
-}
+};
 
 /**
  * Add class to the element.
@@ -89,7 +89,7 @@ Iridium.addClass = function(element, className)
 	}
 
 	element.className += ' ' + className;
-}
+};
 
 /**
  * Removes class from the element.
@@ -113,7 +113,7 @@ Iridium.removeClass = function(element, className)
 
 	t.splice(i, 1);
 	element.className = t.join(' ');
-}
+};
 
 /**
  * Toggles class on the element.
@@ -152,7 +152,7 @@ Iridium.getStyle = function(element, styleName)
 	}
 
 	throw new Error('Cannot get style from the element.');
-}
+};
 
 /**
  * Checks if the object is empty
@@ -197,7 +197,7 @@ Iridium.empty = function(obj)
 	}
 
 	return true;
-}
+};
 
 /**
  * Merges the target with the specified objects and returns new object with fields of all specified objects.
@@ -247,7 +247,7 @@ Iridium.merge = function(target, sources)
 	}
 
 	return result;
-}
+};
 
 /**
  * Recursively clones object.
@@ -304,7 +304,32 @@ Iridium.clone = function(obj)
 	}
 
 	throw new Error("Cannot clone the object. Unsupported type.");
-}
+};
+
+/**
+ * Returns array with numbers in [start; start + count * step] range.
+ * If only one parameter specified function considers that parameter is count.
+ * @param {number} start Range start.
+ * @param {number} count Values count.
+ * @param {number} step Range step.
+ * @returns {Array} Array with numbers in specified range.
+ */
+Iridium.range = function(start, count, step)
+{
+	step = step || 1;
+	start = start || 0;
+
+	if(count === undefined)
+	{
+		count = start;
+		start = 0;
+	}
+	
+	return Array.apply(null, Array(count)).map(function(_, i)
+	{
+		return start + i * step;
+	});
+};
 
 Object.defineProperty(
 	Array.prototype,
@@ -324,7 +349,7 @@ Object.defineProperty(
 		},
 		enumerable: false
 	}
-)
+);
 
 /**
  * Преобразовывает кол-во байт в сокращенный вариант с двоичными приставками МЭК.
@@ -352,7 +377,7 @@ function readableSize(bytes)
 Iridium.goto = function(url)
 {
 	window.location.href = url;
-}
+};
 
 if(!String.prototype.endsWith)
 {
