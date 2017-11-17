@@ -273,8 +273,8 @@ if(Iridium)
 
 		function onInput()
 		{
-			combobox.dispatchEvent(new Event('input'));
 			updateHints();
+			combobox.dispatchEvent(new Event('input'));
 			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
 		}
 
