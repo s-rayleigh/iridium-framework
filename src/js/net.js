@@ -151,8 +151,8 @@ if(Iridium)
 		}
 
 		var httpRequest = new XMLHttpRequest();
-		httpRequest.timeout = params.timeout;
 		httpRequest.open(params.method, url, true, params.user, params.password);
+		httpRequest.timeout = params.timeout;
 
 		httpRequest.onreadystatechange = function()
 		{
