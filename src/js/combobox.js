@@ -215,7 +215,7 @@ if(Iridium)
 				set: function(val)
 				{
 					field.value = val;
-					field.dispatchEvent(new Event('input'));
+					onInput();
 				}
 			},
 			'id': {
@@ -256,7 +256,7 @@ if(Iridium)
 		function hintSelected(val)
 		{
 			field.value = val;
-			field.dispatchEvent(new Event('input'));
+			onInput();
 
 			if(typeof params.onHintSelected === 'function')
 			{
@@ -269,6 +269,13 @@ if(Iridium)
 		function getDataArray()
 		{
 			return useDataList ? params.data.list : params.data;
+		}
+
+		function onInput()
+		{
+			combobox.dispatchEvent(new Event('input'));
+			updateHints();
+			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
 		}
 
 		/**
@@ -352,8 +359,7 @@ if(Iridium)
 
 		field.addEventListener('input', function()
 		{
-			updateHints();
-			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
+			onInput();
 		});
 
 		field.addEventListener('keydown', function(e)
@@ -413,12 +419,6 @@ if(Iridium)
 		{
 			setHintsVisible(false);
 		});
-
-		//Далее все обработчики событий, которые будут добавляться объекту combobox, на самом деле будут добавляться field
-		combobox.addEventListener = function(event, callback, bub)
-		{
-			field.addEventListener(event, callback, bub);
-		};
 
 		combobox.hideHints = function()
 		{
