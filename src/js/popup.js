@@ -440,6 +440,17 @@ if(Iridium && Iridium.Builder)
 			return this.isCreated() && this._element.style.display !== 'none';
 		};
 
+		/**
+		 * Closes all visible popups.
+		 */
+		Popup.closeAll = function()
+		{
+			list.forEach(function(popup)
+			{
+				popup.close();
+			});
+		};
+
 		window.addEventListener('resize', function()
 		{
 			list.forEach(function(popup)
