@@ -279,6 +279,12 @@ if(Iridium && Iridium.Init && Iridium.Breakpoints)
 		 */
 		Tooltip.prototype._onWindowScroll = function()
 		{
+			if(!this._currentParams.element.parentNode)
+			{
+				list.splice(list.indexOf(this, 1));
+				return;
+			}
+
 			if(this._currentParams.event === 'focus')
 			{
 				this._updatePosition();
