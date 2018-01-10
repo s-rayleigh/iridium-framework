@@ -194,6 +194,11 @@ if(Iridium)
 					if(matchElement)
 					{
 						result = matchElement;
+
+						if(typeof params.mapElementValue === 'function')
+						{
+							result = params.mapElementValue(result);
+						}
 					}
 					else
 					{
@@ -203,11 +208,6 @@ if(Iridium)
 						}
 
 						result = field.value;
-					}
-
-					if(typeof params.mapElementValue === 'function')
-					{
-						result = params.mapElementValue(result);
 					}
 
 					return result;
@@ -274,7 +274,18 @@ if(Iridium)
 		function onInput()
 		{
 			updateHints();
-			combobox.dispatchEvent(new Event('input'));
+
+			try
+			{
+				combobox.dispatchEvent(new Event('input'));
+			}
+			catch(e)
+			{
+				var event = document.createEvent('Event');
+				event.initEvent('input', true, true);
+				combobox.dispatchEvent(event);
+			}
+
 			setHintsVisible(hints.children.length > 0 && document.activeElement === field);
 		}
 
