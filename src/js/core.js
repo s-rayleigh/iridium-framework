@@ -25,7 +25,9 @@
  * Iridium Framework Core.
  * @namespace
  */
-var Iridium = {};
+var Iridium = {
+	version: '0.1.0-indev'
+};
 
 /**
  * Generates random id.
