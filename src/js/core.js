@@ -26,7 +26,10 @@
  * @namespace
  */
 var Iridium = {
-	version: '0.1.0-indev'
+	/**
+	 * Version of the Iridium Framework.
+	 */
+	version: '0.1.0-alpha'
 };
 
 /**
@@ -50,10 +53,10 @@ Iridium.randomId = function(length)
 };
 
 /**
- * Проверяет входит-ли подстрока в строку
- * @param {string} needle Подстрока, которая предположительно содержиться в heystack
- * @param {string} haystack Строка, в которой предположительно содержиться подстрока
- * @return {boolean} true - если needle входит в haystack
+ * Check is string contains substring.
+ * @param {string} needle Substring.
+ * @param {string} haystack String.
+ * @return {boolean} True if haystack contains needle.
  */
 Iridium.stringContains = function(needle, haystack)
 {
@@ -62,9 +65,9 @@ Iridium.stringContains = function(needle, haystack)
 
 /**
  * Checks if the element has specified class.
- * @param {HTMLElement} element
- * @param {string} className
- * @return {boolean}
+ * @param {HTMLElement} element Element.
+ * @param {string} className Name of the class.
+ * @return {boolean} True if element has specified class.
  */
 Iridium.hasClass = function(element, className)
 {
@@ -73,9 +76,9 @@ Iridium.hasClass = function(element, className)
 };
 
 /**
- * Add class to the element.
+ * Adds class to the element.
  * @param {HTMLElement} element Element.
- * @param {string} className Class name.
+ * @param {string} className Name of the class.
  */
 Iridium.addClass = function(element, className)
 {
@@ -96,7 +99,7 @@ Iridium.addClass = function(element, className)
 /**
  * Removes class from the element.
  * @param {HTMLElement} element Element.
- * @param {string} className Class name.
+ * @param {string} className Name of the class.
  */
 Iridium.removeClass = function(element, className)
 {
@@ -157,7 +160,7 @@ Iridium.getStyle = function(element, styleName)
 };
 
 /**
- * Checks if the object is empty
+ * Checks if the object is empty.
  * @param {object} obj Object.
  * @return {boolean} Returns true if object is empty.
  */
@@ -354,25 +357,6 @@ Object.defineProperty(
 );
 
 /**
- * Преобразовывает кол-во байт в сокращенный вариант с двоичными приставками МЭК.
- * TODO: rewrite
- * @param {int} bytes Кол-во байт.
- * @return {string} Сокращенный вариант с приставками МЭК.
- */
-function readableSize(bytes)
-{
-	var quantities = ['Б', 'КиБ', 'МиБ', 'ГиБ', 'ТиБ', 'ПиБ'], result = bytes, i;
-
-	for(i = 0; result >= 1024;)
-	{
-		result = bytes / Math.pow(2, ++i * 10);
-	}
-
-	//Приводим result к числовому типу, приводим к одному знаку после запятой и опять приводим к числу
-	return +(+result).toFixed(1) + ' ' + quantities[i];
-}
-
-/**
  * Redirects to the specified URL.
  * @param {string} url URL.
  */
@@ -383,12 +367,6 @@ Iridium.goto = function(url)
 
 if(!String.prototype.endsWith)
 {
-	/**
-	 * Определяет заканчивается-ли строка подстрокой searchString.
-	 * @param {string} searchString
-	 * @param {int} [position]
-	 * @returns {boolean}
-	 */
 	String.prototype.endsWith = function(searchString, position)
 	{
 		var subjectString = this.toString();
@@ -404,6 +382,7 @@ if(!String.prototype.endsWith)
 	};
 }
 
+// Polyfill for the 'includes' method of the Array
 if(!Array.prototype.includes)
 {
 	Array.prototype.includes = function(searchElement)

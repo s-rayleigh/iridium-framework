@@ -1,5 +1,5 @@
-/**
- * Example for Iridium Animation.
+/*
+ * File description.
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -18,37 +18,24 @@
  * @author rayleigh <rayleigh@protonmail.com>
  * @copyright 2018 Vladislav Pashaiev
  * @license LGPL-3.0+
- * @version 0.1-indev
  */
 
-window.addEventListener('load', function()
+*
 {
-	var element = document.getElementById('box'),
-		animation = new Iridium.Animation({
-			element: element,
-			animation: 'fadeIn',
-			direction: 'out',
-			function: 'quad',
-			duration: 1000,
-			autostart: false,
-			repeats: Infinity,
-			onStop: function()
-			{
-				console.log('stop');
-			},
-			onRepeat: function()
-			{
-				console.log('repeat');
-			}
-		});
+	box-sizing: border-box;
+}
 
-	document.getElementById('run-button').addEventListener('click', function()
-	{
-		animation.start();
-	});
+body
+{
+	font: {
+		family: $font-family;
+		size: $font-size;
+	}
 
-	document.getElementById('stop-button').addEventListener('click', function()
-	{
-		animation.stop();
-	});
-});
+	color: $text-color;
+	background: $body-bg;
+
+	margin: 0;
+	padding: 0;
+}
+

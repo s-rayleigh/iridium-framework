@@ -30,77 +30,70 @@
  * @callback InitCallback
  */
 
-if(Iridium)
+/**
+ * Iridium Init.
+ * @namespace
+ */
+Iridium.Init = {};
+
+(function()
 {
 	/**
-	 * Iridium Init.
-	 * @namespace
+	 * List of the callback functions for the initialization.
 	 */
-	Iridium.Init = {};
+	var list = {};
 
-	(function()
+	/**
+	 * Registers callback function for the initialization.
+	 * @param {string} name Name of the module.
+	 * @param {InitCallback} callback Callback function for the initialization.
+	 */
+	Iridium.Init.register = function(name, callback)
 	{
-		/**
-		 * List of the callback functions for the initialization.
-		 */
-		var list = {};
-
-		/**
-		 * Registers callback function for the initialization.
-		 * @param {string} name Name of the module.
-		 * @param {InitCallback} callback Callback function for the initialization.
-		 */
-		Iridium.Init.register = function(name, callback)
+		if(typeof name === 'string' && typeof callback === 'function')
 		{
-			if(typeof name === 'string' && typeof callback === 'function')
+			if(list.hasOwnProperty(name))
 			{
-				if(list.hasOwnProperty(name))
-				{
-					throw new Error('Specified name is already in use.');
-				}
-
-				list[name] = callback;
-			}
-		};
-
-		/**
-		 * Clears initialization list.
-		 */
-		Iridium.Init.clear = function()
-		{
-			list = {};
-		};
-
-		/**
-		 * Launch initialization for specified element for the registered modules.
-		 * @param {HTMLElement} [element=document.body] Element for the initialization.
-		 * @param {string[]} [names] Names of the modules to initialize. If not specified, initialize all registered modules.
-		 */
-		Iridium.Init.launch = function(element, names)
-		{
-			if(!(element instanceof HTMLElement))
-			{
-				element = document.body;
+				throw new Error('Specified name is already in use.');
 			}
 
-			for(var name in list)
-			{
-				if(Array.isArray(names) && !names.includes(name))
-				{
-					continue;
-				}
+			list[name] = callback;
+		}
+	};
 
-				list[name](element);
-			}
-		};
-	}());
-
-	window.addEventListener('load', function()
+	/**
+	 * Clears initialization list.
+	 */
+	Iridium.Init.clear = function()
 	{
-		Iridium.Init.launch();
-	});
-}
-else
+		list = {};
+	};
+
+	/**
+	 * Launch initialization for specified element for the registered modules.
+	 * @param {HTMLElement} [element=document.body] Element for the initialization.
+	 * @param {string[]} [names] Names of the modules to initialize. If not specified, initialize all registered modules.
+	 */
+	Iridium.Init.launch = function(element, names)
+	{
+		if(!(element instanceof HTMLElement))
+		{
+			element = document.body;
+		}
+
+		for(var name in list)
+		{
+			if(Array.isArray(names) && !names.includes(name))
+			{
+				continue;
+			}
+
+			list[name](element);
+		}
+	};
+}());
+
+window.addEventListener('load', function()
 {
-	console.error('Iridium Framework Core must be included to be able to use Iridium Init.');
-}
+	Iridium.Init.launch();
+});

@@ -1,3 +1,7 @@
+/**
+ * @deprecated Refactoring is needed.
+ */
+
 //Перемещение блока ошибки при изменении размеров окна
 window.addEventListener('resize', function()
 {

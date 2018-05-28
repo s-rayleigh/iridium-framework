@@ -1,6 +1,7 @@
 /**
  * Модуль предварительной загрузки файлов на сервер через форму
  * @module file_uploader
+ * @deprecated Refactoring is needed.
  */
 
 window.addEventListener('load', function() { registerCustomElement('file-uploader'); });

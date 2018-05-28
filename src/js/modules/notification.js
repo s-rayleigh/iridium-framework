@@ -2,6 +2,7 @@
 /**
  * @constructor
  * @param {object} newParams Параметры уведомления
+ * @deprecated Refactoring is needed.
  */
 function Notification(newParams)
 {

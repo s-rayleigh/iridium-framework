@@ -5,6 +5,7 @@
  * @author rayleigh <rayleigh@protonmail.com>
  * @version 0.1 indev
  * @licence GPL-3.0
+ * @deprecated Refactoring is needed.
  */
 
 /**

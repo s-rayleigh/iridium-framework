@@ -1,5 +1,5 @@
 /**
- * Example for Iridium Animation.
+ * Build configuration file.
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -18,37 +18,30 @@
  * @author rayleigh <rayleigh@protonmail.com>
  * @copyright 2018 Vladislav Pashaiev
  * @license LGPL-3.0+
- * @version 0.1-indev
  */
 
-window.addEventListener('load', function()
-{
-	var element = document.getElementById('box'),
-		animation = new Iridium.Animation({
-			element: element,
-			animation: 'fadeIn',
-			direction: 'out',
-			function: 'quad',
-			duration: 1000,
-			autostart: false,
-			repeats: Infinity,
-			onStop: function()
-			{
-				console.log('stop');
-			},
-			onRepeat: function()
-			{
-				console.log('repeat');
-			}
-		});
+module.exports = exports = {
 
-	document.getElementById('run-button').addEventListener('click', function()
-	{
-		animation.start();
-	});
+	/**
+	 * Modules to build.
+	 * Core modules are builded anyway.
+	 *
+	 * Lists:
+	 *   Core: core, init
+	 *   Modules: net, breakpoints, builder, url_data, animation, combobox, data_list, popup, svg, tabs, tooltip, touchable
+	 * @type {string[]}
+	 */
+	modules: ['net', 'animation', 'tooltip', 'popup', 'svg', 'combobox', 'tabs', 'touchable'],
 
-	document.getElementById('stop-button').addEventListener('click', function()
-	{
-		animation.stop();
-	});
-});
+	/**
+	 * Build JS to the separate files.
+	 * @type {boolean}
+	 */
+	separateJs: false,
+
+	/**
+	 * Compile sass to the css if true.
+	 * @type {boolean}
+	 */
+	css: true
+};

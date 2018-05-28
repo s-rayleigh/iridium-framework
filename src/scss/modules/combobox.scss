@@ -1,5 +1,5 @@
-/**
- * Example for Iridium Animation.
+/*
+ * Combobox module styles.
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -18,37 +18,36 @@
  * @author rayleigh <rayleigh@protonmail.com>
  * @copyright 2018 Vladislav Pashaiev
  * @license LGPL-3.0+
- * @version 0.1-indev
  */
 
-window.addEventListener('load', function()
+combo-box
 {
-	var element = document.getElementById('box'),
-		animation = new Iridium.Animation({
-			element: element,
-			animation: 'fadeIn',
-			direction: 'out',
-			function: 'quad',
-			duration: 1000,
-			autostart: false,
-			repeats: Infinity,
-			onStop: function()
-			{
-				console.log('stop');
-			},
-			onRepeat: function()
-			{
-				console.log('repeat');
-			}
-		});
+	display: inline-block;
+	position: relative;
+	overflow: visible;
+}
 
-	document.getElementById('run-button').addEventListener('click', function()
+.ir-cb
+{
+	&-hints
 	{
-		animation.start();
-	});
+		position: absolute;
+		width: 100%;
+		margin-top: -2px;
+		z-index: 500;
+	}
 
-	document.getElementById('stop-button').addEventListener('click', function()
+	&-hint
 	{
-		animation.stop();
-	});
-});
+		cursor: pointer;
+	}
+
+	&-btn
+	{
+		@extend .btn;
+
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		margin-left: -3px;
+	}
+}

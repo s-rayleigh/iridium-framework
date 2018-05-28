@@ -20,7 +20,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Iridium Framework - Tooltip</title>
-		<link rel="stylesheet" href="../dist/iridium.css">
+		<link rel="stylesheet" href="../assembly/iridium.css">
 		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
@@ -43,11 +43,21 @@
 			<p>
 				Mauris consectetur sagittis varius. Pellentesque efficitur a odio vel scelerisque. Duis ultricies varius odio sit amet aliquet. Vestibulum sit amet nisl quis neque porta posuere. Aliquam id tempus nunc, nec blandit purus. Fusce pellentesque ligula at eros luctus, eget facilisis massa aliquet. In consequat nunc sed ipsum condimentum lobortis. Ut aliquet et ligula sed pharetra. Phasellus iaculis non elit eget hendrerit. Duis ac convallis orci. Maecenas vehicula eros non placerat condimentum.
 			</p>
+
 			<hr>
+
+			<button class="btn" data-ir-tt="Cursor" data-ir-tt-mg="15">Cursor</button>
+			<button class="btn" data-ir-tt="Tooltip on top" data-ir-tt-pos="top">On top</button>
+			<button class="btn" data-ir-tt="Tooltip on right" data-ir-tt-pos="right">On right</button>
+			<button class="btn" data-ir-tt="Tooltip on bottom" data-ir-tt-pos="bottom">On bottom</button>
+			<button class="btn" data-ir-tt="Tooltip on left" data-ir-tt-pos="left">On left</button>
+
+			<hr>
+
 			<form>
 				<input type="text" data-ir-tt="Displays on focus" data-ir-tt-pos="right" data-ir-tt-xl-pos="left" data-ir-tt-event="focus" placeholder="Focus me...">
 			</form>
 		</div>
-		<script src="../dist/iridium.js"></script>
+		<script src="../assembly/iridium.js"></script>
 	</body>
 </html>

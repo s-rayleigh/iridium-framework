@@ -1,5 +1,5 @@
 /*
- * Combobox module styles.
+ * Popup module styles.
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -14,24 +14,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2018 Vladislav Pashaiev
+ * @license LGPL-3.0+
  */
 
-combo-box
+.ir
 {
-	display: inline-block;
-	position: relative;
-	overflow: visible;
-}
+	&-popup
+	{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
 
-.ir-cb-hints
-{
-	position: absolute;
-	width: 100%;
-	margin-top: -2px;
-	z-index: 500;
-}
+	&-pp-overlay
+	{
+		position: fixed;
+		background: rgba(0, 0, 0, $pp-overlay-tint);
+		width: 100%;
+		height: 100%;
+	}
 
-.ir-cb-hint
-{
-	cursor: pointer;
+	&-pp-window
+	{
+		position: absolute;
+	}
 }

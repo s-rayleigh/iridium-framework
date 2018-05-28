@@ -1,4 +1,4 @@
-/*
+/**
  * Example for Iridium Combobox.
  * This file is part of Iridium Framework project.
  *
@@ -16,7 +16,7 @@
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author rayleigh <rayleigh@protonmail.com>
- * @copyright 2017 Vladislav Pashaiev
+ * @copyright 2018 Vladislav Pashaiev
  * @license LGPL-3.0+
  * @version 0.1-indev
  */

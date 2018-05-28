@@ -1,5 +1,8 @@
-/*
- * Popup module styles.
+/**
+ * Touchable elements.
+ * When touchable element lost focus, class 'touched' added to it.
+ * To set element touchable add 'data-touchable' attribute (without parameters) to the element.
+ *
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -14,26 +17,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2018 Vladislav Pashaiev
+ * @license LGPL-3.0+
+ * @module touchable
+ * @requires Iridium
+ * @requires Iridium.Init
  */
 
-.ir-popup
-{
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-}
 
-.ir-pp-overlay
+Iridium.Init.register('touchable', function(element)
 {
-	position: fixed;
-	background: rgba(0, 0, 0, .7);
-	width: 100%;
-	height: 100%;
-}
-
-.ir-pp-window
-{
-	position: absolute;
-}
+	var elements = element.querySelectorAll('[data-touchable]');
+	for(var i = 0; i < elements.length; i++)
+	{
+		elements[i].addEventListener('blur', function()
+		{
+			Iridium.addClass(this, 'touched');
+		});
+	}
+});

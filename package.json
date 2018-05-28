@@ -2,7 +2,7 @@
 	"name": "iridium-framework",
 	"description": "Framework for developing web projects.",
 	"version": "0.1.0-indev",
-	"license": "GPL-3.0",
+	"license": "LGPL-3.0+",
 	"author": "rayleigh <rayleigh@protonmail.com>",
 	"keywords": [
 		"framework",
@@ -12,16 +12,17 @@
 		"frontend"
 	],
 	"devDependencies": {
-		"gulp": "^3.9.1",
-		"del": "^3.0.0",
-		"gulp-uglify": "^3.0.0",
-		"gulp-concat": "^2.6.1",
-		"gulp-rename": "^1.2.2"
-	},
-	"dependencies": {
 		"chai": "^4.1.2",
-		"gulp-clean-css": "^3.9.2",
-		"mocha": "^5.0.1",
-		"run-sequence": "^2.2.1"
+		"del": "^3.0.0",
+		"gulp": "^4.0.0",
+		"gulp-clean-css": "^3.9.4",
+		"gulp-concat": "^2.6.1",
+		"gulp-if": "^2.0.2",
+		"gulp-rename": "^1.2.3",
+		"gulp-replace": "^1.0.0",
+		"gulp-sass": "^4.0.1",
+		"gulp-uglify": "^3.0.0",
+		"mocha": "^5.2.0",
+		"sassdoc": "^2.5.0"
 	}
 }

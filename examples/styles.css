@@ -1,14 +1,6 @@
 html, body
 {
-	margin: 0;
-	padding: 0;
 	background: whitesmoke;
-	font-size: 14px;
-}
-
-*
-{
-	box-sizing: border-box;
 }
 
 .example-panel
@@ -84,44 +76,6 @@ input:focus
 {
 	outline: none;
 	border-color: slateblue;
-}
-
-
-
-.ir-cb-btn
-{
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-	margin-left: -3px;
-}
-
-input[type="button"],
-button
-{
-	background: slateblue;
-	border: none;
-	color: white;
-	font-weight: bold;
-	padding: 6px;
-	font-size: 14px;
-	cursor: pointer;
-	transition: .2s;
-	outline: none;
-	border-radius: 2px;
-}
-
-input[type="button"]:hover,
-button:hover
-{
-	box-shadow: 0 2px 7px 0 rgba(0, 0, 0, .2);
-	background: mediumslateblue;
-}
-
-input[type="button"]:active,
-button:active
-{
-	background: darkslateblue;
-	box-shadow: none;
 }
 
 .ir-cb-hints

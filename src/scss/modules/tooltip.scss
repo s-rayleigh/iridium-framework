@@ -1,0 +1,121 @@
+/*
+ * Tooltip module styles.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2018 Vladislav Pashaiev
+ * @license LGPL-3.0+
+ */
+
+@mixin border-triangle($direction, $width, $height, $color)
+{
+	$n: 0;
+
+	@if $direction == top
+	{
+		border-width: 0 $width/2 $height $width/2;
+		$n: 3;
+	}
+	@else if $direction == right
+	{
+		border-width: $width/2 0 $width/2 $height;
+		$n: 4;
+	}
+	@else if $direction == bottom
+	{
+		border-width: $height $width/2 0 $width/2;
+		$n: 1;
+	}
+	@else if $direction == left
+	{
+		border-width: $width/2 $height $width/2 0;
+		$n: 2;
+	}
+	@else
+	{
+		@error "Wrond direction.";
+	}
+
+	border-color: list-replace-nth(list-fill(4, transparent), $n, $color);
+}
+
+%tt-tr-styles
+{
+	content: '';
+	position: absolute;
+	border-style: solid;
+}
+
+.ir-tooltip-obj
+{
+	position: fixed;
+	max-width: 350px;
+	padding: $tt-padding;
+	font-size: 14px;
+	line-height: 18px;
+
+	background: $tt-background;
+
+	@if $tt-border-width > 0
+	{
+		border: $tt-border-width $tt-border-style $tt-border-color;
+	}
+
+	@if $tt-outline-width > 0
+	{
+		outline: $tt-outline-width $tt-outline-style $tt-outline-color;
+	}
+
+	box-shadow: 0 0 20px 0 rgba(13, 28, 36, .2);
+
+	z-index: $zi-tooltip;
+
+	@each $side in top, right, bottom, left
+	{
+		// Side to positioning
+		$opposite: opposite-side($side);
+
+		// Side about which to center
+		$centering-side: if($side == top or $side == bottom, left, top);
+
+		&.#{$side}
+		{
+			@if $tt-border-width > 0
+			{
+				&:before
+				{
+					$width: $tt-arrow-width + $tt-border-width * 2;
+					$height: $tt-arrow-height + $tt-border-width;
+
+					@include border-triangle($opposite, $width, $height, lightgray);
+					@extend %tt-tr-styles;
+
+					#{$opposite}: -$height - $tt-border-width;
+					#{$centering-side}: calc(50% - #{$width / 2});
+				}
+			}
+
+			&:after
+			{
+				@include border-triangle($opposite, $tt-arrow-width, $tt-arrow-height, ghostwhite);
+				@extend %tt-tr-styles;
+
+				#{$opposite}: -$tt-arrow-height;
+				#{$centering-side}: calc(50% - #{$tt-arrow-width / 2});
+			}
+		}
+	}
+}

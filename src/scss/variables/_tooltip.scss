@@ -1,5 +1,5 @@
-/**
- * Example for Iridium Animation.
+/*
+ * Variables for the tooltips.
  * This file is part of Iridium Framework project.
  *
  * Iridium Framework is free software: you can redistribute it and/or modify
@@ -18,37 +18,32 @@
  * @author rayleigh <rayleigh@protonmail.com>
  * @copyright 2018 Vladislav Pashaiev
  * @license LGPL-3.0+
- * @version 0.1-indev
  */
 
-window.addEventListener('load', function()
-{
-	var element = document.getElementById('box'),
-		animation = new Iridium.Animation({
-			element: element,
-			animation: 'fadeIn',
-			direction: 'out',
-			function: 'quad',
-			duration: 1000,
-			autostart: false,
-			repeats: Infinity,
-			onStop: function()
-			{
-				console.log('stop');
-			},
-			onRepeat: function()
-			{
-				console.log('repeat');
-			}
-		});
+$tt-padding: 5px !default;
+$tt-background: ghostwhite !default;
 
-	document.getElementById('run-button').addEventListener('click', function()
-	{
-		animation.start();
-	});
+//
+// Border
+//
 
-	document.getElementById('stop-button').addEventListener('click', function()
-	{
-		animation.stop();
-	});
-});
+// Set width to 0 to disable border
+$tt-border-width: 1px !default;
+$tt-border-style: solid !default;
+$tt-border-color: $white !default;
+
+//
+// Outline
+//
+
+// Set width to 0 to disable outline
+$tt-outline-width: 1px !default;
+$tt-outline-style: solid !default;
+$tt-outline-color: lightgray !default;
+
+//
+// Arrow
+//
+
+$tt-arrow-width: 14px !default;
+$tt-arrow-height: 8px !default;

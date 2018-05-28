@@ -1,0 +1,73 @@
+/*
+ * File description.
+ * This file is part of Iridium Framework project.
+ *
+ * Iridium Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iridium Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author rayleigh <rayleigh@protonmail.com>
+ * @copyright 2018 Vladislav Pashaiev
+ * @license LGPL-3.0+
+ */
+
+/// Fills list of the specified length by the specified values.
+/// @example scss
+/// 	fill-list(3, #fff)
+///		// (#fff #fff #fff)
+/// @param {number} $len Length of the list
+/// @param {mixed} $value Value to fill the list.
+/// @return {list} Filled list.
+@function list-fill($len, $value: 0)
+{
+	@if type-of($len) != number
+	{
+		@error "Argument #{quote($len)} should be type of number.";
+	}
+
+	@if $len < 1
+	{
+		@error "Argument #{quote($len)} should be greater than 0.";
+	}
+
+	$list: ();
+
+	@for $i from 1 through $len
+	{
+		$list: append($list, $value);
+	}
+
+	@return $list;
+}
+
+@function list-replace-nth($list, $index, $value)
+{
+	@if type-of($index) != number
+	{
+		@error "Argument #{quote($index)} should be type of number.";
+	}
+
+	@if $index == 0
+	{
+		@error "Argument #{quote($index)} should be not equal to 0.";
+	}
+
+	$index: if($index < 0, length($list) + $index + 1, $index);
+	$result: ();
+
+	@for $i from 1 through length($list)
+	{
+		$result: append($result, if($i == $index, $value, nth($list, $i)));
+	}
+
+	@return $result;
+}
