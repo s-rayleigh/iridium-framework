@@ -226,7 +226,7 @@ Iridium.merge = function(target, sources)
 	{
 		var source = arguments[i];
 
-		//null and undefined
+		// null and undefined
 		if(source == null)
 		{
 			continue;
@@ -234,14 +234,15 @@ Iridium.merge = function(target, sources)
 
 		for(var key in source)
 		{
-			//null and undefined
+			// null and undefined
 			if(source[key] == null)
 			{
 				continue;
 			}
 
-			//Merge objects in object
-			if(source[key] && target[key] && typeof source[key] === 'object' && typeof target[key] === 'object')
+			// Merge objects in object
+			// Do not copy child properties of the Nodes, just copy the reference
+			if(source[key] && target[key] && source[key] instanceof Object && target[key] instanceof Object && !(target[key] instanceof Node))
 			{
 				Iridium.merge(target[key], source[key]);
 				continue;

@@ -214,5 +214,13 @@ describe('Iridium', () =>
 				&& res.prop1.prop2 === obj2.prop1.prop2
 				&& res.prop1.prop3 === obj3.prop1.prop3);
 		});
+
+		it('should just copy the references to the Node objects', () =>
+		{
+			let obj1 = {prop1: 1, prop2: document.documentElement},
+				obj2 = {prop2: document.body};
+			let res = Iridium.merge(obj1, obj2);
+			assert(res.prop2 === document.body);
+		});
 	});
 });
