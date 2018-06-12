@@ -28,7 +28,7 @@
 
 	@include outline($btn-outline-width, $btn-outline-style, $btn-outline-color);
 	@include border($btn-border-width, $btn-border-style, $btn-border-color);
-	border-radius: 2px;
+	border-radius: $btn-border-radius;
 
 	font: {
 		size: $btn-font-size;
