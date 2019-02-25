@@ -71,14 +71,14 @@ Iridium.Init = {};
 
 	/**
 	 * Launch initialization for specified element for the registered modules.
-	 * @param {HTMLElement} [element=document.body] Element for the initialization.
+	 * @param {HTMLElement} [element] Element for the initialization.
 	 * @param {string[]} [names] Names of the modules to initialize. If not specified, initialize all registered modules.
 	 */
 	Iridium.Init.launch = function(element, names)
 	{
 		if(!(element instanceof HTMLElement))
 		{
-			element = document.body;
+			throw new Error('Element must be instance of HTMLElement.');
 		}
 
 		for(var name in list)
@@ -95,5 +95,5 @@ Iridium.Init = {};
 
 window.addEventListener('load', function()
 {
-	Iridium.Init.launch();
+	Iridium.Init.launch(document.body);
 });
