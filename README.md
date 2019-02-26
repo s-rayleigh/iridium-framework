@@ -35,6 +35,7 @@ Examples of using project are in `examples` directory. Every html file in that d
 * svg - Tools for working with SVG.
 * data_list - List wrapper with page navigation support.
 * touchable - Small tool that set class to element after obtaining focus.
+
 Also there are modules waiting for refactoring and not ready to use:
 * notification
 * file_uploader
