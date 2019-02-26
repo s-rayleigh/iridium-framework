@@ -68,6 +68,7 @@ Iridium.stringContains = function(needle, haystack)
  * @param {HTMLElement} element Element.
  * @param {string} className Name of the class.
  * @return {boolean} True if element has specified class.
+ * @deprecated Use {@link Element.classList.contains} instead.
  */
 Iridium.hasClass = function(element, className)
 {
@@ -79,6 +80,7 @@ Iridium.hasClass = function(element, className)
  * Adds class to the element.
  * @param {HTMLElement} element Element.
  * @param {string} className Name of the class.
+ * @deprecated Use {@link Element.classList.add} instead.
  */
 Iridium.addClass = function(element, className)
 {
@@ -100,6 +102,7 @@ Iridium.addClass = function(element, className)
  * Removes class from the element.
  * @param {HTMLElement} element Element.
  * @param {string} className Name of the class.
+ * @deprecated Use {@link Element.classList.remove} instead.
  */
 Iridium.removeClass = function(element, className)
 {
@@ -124,6 +127,7 @@ Iridium.removeClass = function(element, className)
  * Toggles class on the element.
  * @param {HTMLElement} element Element.
  * @param {string} className Class name.
+ * @deprecated Use {@link Element.classList.toggle} instead.
  */
 Iridium.toggleClass = function(element, className)
 {
