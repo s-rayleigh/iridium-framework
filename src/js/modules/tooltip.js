@@ -368,10 +368,10 @@ Iridium.Tooltip = (function()
 	};
 
 	/**
-	 * @returns {boolean} True if tooltip object has alive element.
+	 * @returns {boolean} True if tooltip object is on the page.
 	 * @private
 	 */
-	Tooltip.prototype._hasElement = function()
+	Tooltip.prototype._onPage = function()
 	{
 		return !!this._currentParams.element.parentNode;
 	};
@@ -396,7 +396,7 @@ Iridium.Tooltip = (function()
 	 */
 	Tooltip.prototype._onWindowScroll = function()
 	{
-		if(!this._hasElement())
+		if(!this._onPage())
 		{
 			list.splice(list.indexOf(this, 1));
 			return;
@@ -440,20 +440,6 @@ Iridium.Tooltip = (function()
 		}
 	};
 
-	/**
-	 * Removes tooltips without elements.
-	 */
-	Tooltip.removeElementless = function()
-	{
-		for(var i = 0; i < list.length; i++)
-		{
-			if(list[i]._hasElement())
-			{
-				list.splice(list.indexOf(list[i], 1));
-			}
-		}
-	};
-
 	window.addEventListener('scroll', function(e)
 	{
 		for(var i = 0; i < list.length; i++)
@@ -478,50 +464,59 @@ Iridium.Tooltip = (function()
 		}
 	});
 
+	// Initialization
+	Iridium.Init.register('tooltip', function(element)
+	{
+		// Remove all tooltips that in not on the page
+		for(var i = 0; i < list.length; i++)
+		{
+			if(!list[i]._onPage())
+			{
+				list.splice(list.indexOf(list[i], 1));
+			}
+		}
+
+		var ttElements = element.querySelectorAll('[data-ir-tt]');
+
+		for(var i = 0; i < ttElements.length; i++)
+		{
+			var tt     = ttElements[i],
+				params = {
+					element: tt,
+					content: tt.dataset.irTt,
+					event: tt.dataset.irTtEvent,
+					position: tt.dataset.irTtPos,
+					margin: tt.dataset.irTtMg,
+					tooltipClass: tt.dataset.irTtClass,
+					showDelay: tt.dataset.irTtSd,
+					hideDelay: tt.dataset.irTtHd,
+					responsive: {
+						sm: {
+							event: tt.dataset.irTtSmEvent,
+							position: tt.dataset.irTtSmPos,
+							margin: tt.dataset.irTtSmMg
+						},
+						md: {
+							event: tt.dataset.irTtMdEvent,
+							position: tt.dataset.irTtMdPos,
+							margin: tt.dataset.irTtMdMg
+						},
+						lg: {
+							event: tt.dataset.irTtLgEvent,
+							position: tt.dataset.irTtLgPos,
+							margin: tt.dataset.irTtLgMg
+						},
+						xl: {
+							event: tt.dataset.irTtXlEvent,
+							position: tt.dataset.irTtXlPos,
+							margin: tt.dataset.irTtXlMg
+						}
+					}
+				};
+
+			new Iridium.Tooltip(params);
+		}
+	});
+
 	return Tooltip;
 }());
-
-// Initialization
-Iridium.Init.register('tooltip', function(element)
-{
-	var ttElements = element.querySelectorAll('[data-ir-tt]');
-
-	for(var i = 0; i < ttElements.length; i++)
-	{
-		var tt     = ttElements[i],
-			params = {
-				element: tt,
-				content: tt.dataset.irTt,
-				event: tt.dataset.irTtEvent,
-				position: tt.dataset.irTtPos,
-				margin: tt.dataset.irTtMg,
-				tooltipClass: tt.dataset.irTtClass,
-				showDelay: tt.dataset.irTtSd,
-				hideDelay: tt.dataset.irTtHd,
-				responsive: {
-					sm: {
-						event: tt.dataset.irTtSmEvent,
-						position: tt.dataset.irTtSmPos,
-						margin: tt.dataset.irTtSmMg
-					},
-					md: {
-						event: tt.dataset.irTtMdEvent,
-						position: tt.dataset.irTtMdPos,
-						margin: tt.dataset.irTtMdMg
-					},
-					lg: {
-						event: tt.dataset.irTtLgEvent,
-						position: tt.dataset.irTtLgPos,
-						margin: tt.dataset.irTtLgMg
-					},
-					xl: {
-						event: tt.dataset.irTtXlEvent,
-						position: tt.dataset.irTtXlPos,
-						margin: tt.dataset.irTtXlMg
-					}
-				}
-			};
-
-		new Iridium.Tooltip(params);
-	}
-});
