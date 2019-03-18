@@ -16,7 +16,7 @@
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author rayleigh <rayleigh@protonmail.com>
- * @copyright 2017 Vladislav Pashaiev
+ * @copyright 2019 Vladislav Pashaiev
  * @license LGPL-3.0+
  * @version 0.1-indev
  */
@@ -132,6 +132,16 @@ Iridium.removeClass = function(element, className)
 Iridium.toggleClass = function(element, className)
 {
 	Iridium.hasClass(element, className) ? Iridium.removeClass(element, className) : Iridium.addClass(element, className);
+};
+
+/**
+ * Checks that node is on the page.
+ * @param {Node} node Node.
+ * @returns {boolean} True if node is on the page.
+ */
+Iridium.onPage = function(node)
+{
+	return node === document.body ? false : document.body.contains(node);
 };
 
 /**
