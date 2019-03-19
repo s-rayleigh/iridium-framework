@@ -56,7 +56,8 @@ Iridium.Tabs = (function()
 	 */
 	function Tabs(params)
 	{
-		var _ = this;
+		var _ = this,
+			i;
 
 		_._params = {
 			defaultTab: 0,
@@ -141,13 +142,13 @@ Iridium.Tabs = (function()
 		{
 			if(btn instanceof HTMLElement)
 			{
-				Iridium.removeClass(btn, 'active');
+				btn.classList.remove('active');
 			}
 		});
 
 		if(buttons[tabNum] instanceof HTMLElement)
 		{
-			Iridium.addClass(buttons[tabNumber], 'active');
+			buttons[tabNum].classList.add('active');
 		}
 
 		for(var i = 0; i < tabs.length; i++)
