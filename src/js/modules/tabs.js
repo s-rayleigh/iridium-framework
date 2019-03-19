@@ -16,7 +16,7 @@
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author rayleigh <rayleigh@protonmail.com>
- * @copyright 2018 Vladislav Pashaiev
+ * @copyright 2019 Vladislav Pashaiev
  * @license LGPL-3.0+
  * @module tabs
  * @requires Iridium
@@ -39,13 +39,7 @@ Iridium.Tabs = (function()
 		 * List of the initialized tabs.
 		 * @type {Array}
 		 */
-		tabs      = [],
-
-		/**
-		 * Unique tabs names.
-		 * @type {Array}
-		 */
-		names     = [];
+		list      = [];
 
 	/**
 	 * Iridium Tabs.
@@ -74,7 +68,7 @@ Iridium.Tabs = (function()
 
 		if(!(Array.isArray(_._params.buttons) && _._params.buttons.length))
 		{
-			throw new Error('Parameter "buttons" should be an array with elements.');
+			throw new Error('Parameter "buttons" should be an not empty array.');
 		}
 
 		if(!(Array.isArray(_._params.tabs) && _._params.tabs.length))
@@ -84,12 +78,10 @@ Iridium.Tabs = (function()
 
 		if(_._params.name)
 		{
-			if(names.indexOf(_._params.name) !== -1)
+			if(list.map(function(t) { return t._tabsName; }).includes(_._params.name))
 			{
 				throw new Error('Tabs name already taken by another tabs.');
 			}
-
-			names.push(_._params.name);
 		}
 
 		/**
@@ -117,7 +109,7 @@ Iridium.Tabs = (function()
 
 		// Click event listeners for the buttons
 		var buttons = _._params.buttons;
-		for(var i = 0; i < buttons.length; i++)
+		for(i = 0; i < buttons.length; i++)
 		{
 			if(buttons[i] instanceof HTMLElement)
 			{
@@ -132,14 +124,14 @@ Iridium.Tabs = (function()
 			}
 		}
 
-		tabs.push(_);
+		list.push(_);
 	}
 
 	/**
 	 * Shows tab with the specified number.
-	 * @param tabNumber Number of the tab.
+	 * @param tabNum Number of the tab.
 	 */
-	Tabs.prototype.show = function(tabNumber)
+	Tabs.prototype.show = function(tabNum)
 	{
 		var tabs    = this._params.tabs,
 			buttons = this._params.buttons,
@@ -153,7 +145,7 @@ Iridium.Tabs = (function()
 			}
 		});
 
-		if(buttons[tabNumber] instanceof HTMLElement)
+		if(buttons[tabNum] instanceof HTMLElement)
 		{
 			Iridium.addClass(buttons[tabNumber], 'active');
 		}
@@ -167,7 +159,7 @@ Iridium.Tabs = (function()
 				continue;
 			}
 
-			if(i === tabNumber)
+			if(i === tabNum)
 			{
 				tab.style.display = '';
 
@@ -215,7 +207,7 @@ Iridium.Tabs = (function()
 		get: function()
 		{
 			// Return copy
-			return tabs.slice();
+			return list.slice();
 		}
 	});
 
@@ -227,11 +219,11 @@ Iridium.Tabs = (function()
 	 */
 	Tabs.getByName = function(name)
 	{
-		for(var i = 0; i < tabs.length; i++)
+		for(var i = 0; i < list.length; i++)
 		{
-			if(tabs[i]._tabsName && tabs[i]._tabsName === name)
+			if(list[i]._tabsName && list[i]._tabsName === name)
 			{
-				return tabs[i];
+				return list[i];
 			}
 		}
 
