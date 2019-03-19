@@ -468,7 +468,7 @@ Iridium.Tooltip = (function()
 	Iridium.Init.register('tooltip', function(element)
 	{
 		// Remove all tooltips that in not on the page
-		for(var i = 0; i < list.length; i++)
+		for(var i = list.length - 1; i >= 0; --i)
 		{
 			if(!list[i]._onPage())
 			{
