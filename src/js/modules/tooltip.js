@@ -465,7 +465,7 @@ Iridium.Tooltip = (function()
 	});
 
 	// Initialization
-	Iridium.Init.register('tooltip', function(element)
+	Iridium.Init.register('ir-tooltip', function(element)
 	{
 		var i = list.length - 1;
 
