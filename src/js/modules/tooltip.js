@@ -467,18 +467,17 @@ Iridium.Tooltip = (function()
 	// Initialization
 	Iridium.Init.register('tooltip', function(element)
 	{
+		var i = list.length - 1;
+
 		// Remove all tooltips that in not on the page
-		for(var i = list.length - 1; i >= 0; --i)
+		while(i >= 0)
 		{
-			if(!list[i]._onPage())
-			{
-				list.splice(list.indexOf(list[i], 1));
-			}
+			if(!list[i]._onPage()) { list.splice(i, 1); }
 		}
 
 		var ttElements = element.querySelectorAll('[data-ir-tt]');
 
-		for(var i = 0; i < ttElements.length; i++)
+		for(i = 0; i < ttElements.length; i++)
 		{
 			var tt     = ttElements[i],
 				params = {
