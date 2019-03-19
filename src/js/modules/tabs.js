@@ -197,6 +197,30 @@ Iridium.Tabs = (function()
 	};
 
 	/**
+	 * @returns {boolean} True if all tab buttons is on the page.
+	 * @private
+	 */
+	Tabs.prototype._onPage = function()
+	{
+		var btns = this._params.buttons;
+
+		if(Iridium.empty(btns))
+		{
+			return false;
+		}
+
+		for(var i = 0; i < btns.length; i++)
+		{
+			if(!Iridium.onPage(btns[i]))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	/**
 	 * List of the initialized tabs.
 	 * @property {Tabs[]} list
 	 * @memberOf Tabs
@@ -243,13 +267,16 @@ Iridium.Tabs = (function()
 	// Initialization
 	Iridium.Init.register('ir-tabs', function(element)
 	{
-		tabsCount    = 0;
-		tabs.length  = 0;
-		names.length = 0;
+		var i = list.length - 1;
+
+		while(i >= 0)
+		{
+			if(!list[i]._onPage()) { list.splice(i, 1); }
+		}
 
 		var tabsElements = element.querySelectorAll('[data-ir-tabs]');
 
-		for(var i = 0; i < tabsElements.length; i++)
+		for(i = 0; i < tabsElements.length; i++)
 		{
 			var te = tabsElements[i];
 
