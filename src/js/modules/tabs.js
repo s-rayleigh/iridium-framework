@@ -101,7 +101,7 @@ Iridium.Tabs = (function()
 
 		if(_._params.useUrl && Iridium.UrlData.has(_._tabsName))
 		{
-			_.show(parseInt(Iridium.UrlData.get(_._tabsName)));
+			_.show(Iridium.UrlData.get(_._tabsName));
 		}
 		else
 		{
@@ -129,14 +129,23 @@ Iridium.Tabs = (function()
 	}
 
 	/**
-	 * Shows tab with the specified number.
-	 * @param tabNum Number of the tab.
+	 * Shows tab with the specified name or number.
+	 * @param {number|string} tabId Name or number of the tab.
+	 * @returns True if tab is shown.
 	 */
-	Tabs.prototype.show = function(tabNum)
+	Tabs.prototype.show = function(tabId)
 	{
 		var tabs    = this._params.tabs,
 			buttons = this._params.buttons,
-			opened  = false;
+			opened  = false,
+			tabNum  = parseInt(tabId),
+			i;
+
+		if(isNaN(tabNum))
+		{
+			tabNum = buttons.map(function(b) { return b.dataset.irTabsBtn; }).indexOf(tabId);
+			if(tabNum === -1) { return false; }
+		}
 
 		buttons.forEach(function(btn)
 		{
@@ -146,12 +155,18 @@ Iridium.Tabs = (function()
 			}
 		});
 
-		if(buttons[tabNum] instanceof HTMLElement)
+		var btn = buttons[tabNum];
+
+		if(btn instanceof HTMLElement)
 		{
-			buttons[tabNum].classList.add('active');
+			btn.classList.add('active');
+			if(btn.dataset.irTabsBtn)
+			{
+				tabId = btn.dataset.irTabsBtn;
+			}
 		}
 
-		for(var i = 0; i < tabs.length; i++)
+		for(i = 0; i < tabs.length; i++)
 		{
 			var tab = tabs[i];
 
@@ -171,7 +186,7 @@ Iridium.Tabs = (function()
 
 				if(this._params.useUrl)
 				{
-					Iridium.UrlData.set(this._tabsName, i + '');
+					Iridium.UrlData.set(this._tabsName, tabId + '');
 				}
 
 				opened = true;
@@ -192,7 +207,7 @@ Iridium.Tabs = (function()
 	{
 		if(Iridium.UrlData.has(this._tabsName))
 		{
-			this.show(parseInt(Iridium.UrlData.get(this._tabsName)));
+			this.show(Iridium.UrlData.get(this._tabsName));
 		}
 	};
 
