@@ -67,14 +67,44 @@ Iridium.Tabs = (function()
 
 		Iridium.merge(_._params, params);
 
-		if(!(Array.isArray(_._params.buttons) && _._params.buttons.length))
+		var buttons = _._params.buttons,
+			tabs = _._params.tabs,
+			btnsCheck = Array.isArray(buttons) && buttons.length > 0;
+
+		if(btnsCheck)
 		{
-			throw new Error('Parameter "buttons" should be an not empty array.');
+			for(i = 0; i < buttons.length; i++)
+			{
+				if(!(buttons[i] instanceof HTMLElement))
+				{
+					btnsCheck = false;
+					break;
+				}
+			}
 		}
 
-		if(!(Array.isArray(_._params.tabs) && _._params.tabs.length))
+		if(!btnsCheck)
 		{
-			throw new Error('Parameter "tabs" should be an array with elements.');
+			throw new Error('Parameter "buttons" should be an not empty array of HTMLElement.');
+		}
+
+		var tabsCheck = Array.isArray(tabs) && tabs.length;
+
+		if(tabsCheck)
+		{
+			for(i = 0; i < tabs.length; i++)
+			{
+				if(!(tabs[i] instanceof HTMLElement))
+				{
+					tabsCheck = false;
+					break;
+				}
+			}
+		}
+
+		if(!tabsCheck)
+		{
+			throw new Error('Parameter "tabs" should be an not empty array of HTMLElement.');
 		}
 
 		if(_._params.name)
@@ -109,20 +139,16 @@ Iridium.Tabs = (function()
 		}
 
 		// Click event listeners for the buttons
-		var buttons = _._params.buttons;
 		for(i = 0; i < buttons.length; i++)
 		{
-			if(buttons[i] instanceof HTMLElement)
+			buttons[i].addEventListener('click', function(i)
 			{
-				buttons[i].addEventListener('click', function(i)
+				return function(e)
 				{
-					return function(e)
-					{
-						e.preventDefault();
-						_.show(i);
-					};
-				}(i));
-			}
+					e.preventDefault();
+					_.show(i);
+				};
+			}(i));
 		}
 
 		list.push(_);
@@ -131,7 +157,7 @@ Iridium.Tabs = (function()
 	/**
 	 * Shows tab with the specified name or number.
 	 * @param {number|string} tabId Name or number of the tab.
-	 * @returns True if tab is shown.
+	 * @returns {boolean} True if tab is shown.
 	 */
 	Tabs.prototype.show = function(tabId)
 	{
@@ -147,33 +173,18 @@ Iridium.Tabs = (function()
 			if(tabNum === -1) { return false; }
 		}
 
-		buttons.forEach(function(btn)
-		{
-			if(btn instanceof HTMLElement)
-			{
-				btn.classList.remove('active');
-			}
-		});
-
+		buttons.forEach(function(btn) { btn.classList.remove('active'); });
 		var btn = buttons[tabNum];
+		btn.classList.add('active');
 
-		if(btn instanceof HTMLElement)
+		if(btn.dataset.irTabsBtn)
 		{
-			btn.classList.add('active');
-			if(btn.dataset.irTabsBtn)
-			{
-				tabId = btn.dataset.irTabsBtn;
-			}
+			tabId = btn.dataset.irTabsBtn;
 		}
 
 		for(i = 0; i < tabs.length; i++)
 		{
 			var tab = tabs[i];
-
-			if(!(tab instanceof HTMLElement))
-			{
-				continue;
-			}
 
 			if(i === tabNum)
 			{
