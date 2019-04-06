@@ -115,8 +115,8 @@ Iridium.Net.objectURLEncode = function(obj)
  * @param {Iridium.Net.DataType} [parameters.dataType = JSON] Type of the response data.
  * @param {RequestSuccess} [parameters.success] Success request callback.
  * @param {RequestError} [parameters.error] Request error callback.
- * @param {string} [parameters.user]
- * @param {string} [parameters.password]
+ * @param {string} [parameters.user = null] User name for authentication purposes.
+ * @param {string} [parameters.password = null] Password for authentication purposes.
  * @param {int} [parameters.timeout = 0] Timeout of the request in milliseconds.
  */
 Iridium.Net.request = function(url, parameters)
@@ -226,11 +226,11 @@ Iridium.Net.request = function(url, parameters)
 
 /**
  * Sends a POST request.
- * @param {string} url
- * @param {object} [data]
- * @param {RequestSuccess} [success]
- * @param {Iridium.Net.DataType} [dataType]
- * @param {RequestError} [error]
+ * @param {string} url URL to send the request to.
+ * @param {FormData|object} [data] Request data.
+ * @param {RequestSuccess} [success] Success request callback.
+ * @param {Iridium.Net.DataType} [dataType = JSON] Type of the response data.
+ * @param {RequestError} [error] Request error callback.
  */
 Iridium.Net.post = function(url, data, success, dataType, error)
 {
@@ -245,11 +245,11 @@ Iridium.Net.post = function(url, data, success, dataType, error)
 
 /**
  * Sends a GET request.
- * @param {string} url
- * @param {object} [data]
- * @param {RequestSuccess} [success]
- * @param {Iridium.Net.DataType} [dataType]
- * @param {RequestError} [error]
+ * @param {string} url URL to send the request to.
+ * @param {object} [data] Request data.
+ * @param {RequestSuccess} [success] Success request callback.
+ * @param {Iridium.Net.DataType} [dataType = JSON] Type of the response data.
+ * @param {RequestError} [error] Request error callback.
  */
 Iridium.Net.get = function(url, data, success, dataType, error)
 {
