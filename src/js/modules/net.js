@@ -16,7 +16,7 @@
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author rayleigh <rayleigh@protonmail.com>
- * @copyright 2018 Vladislav Pashaiev
+ * @copyright 2019 Vladislav Pashaiev
  * @license LGPL-3.0+
  * @module net
  * @requires Iridium
@@ -60,12 +60,9 @@ Object.freeze(Iridium.Net.Method);
  * Request result data type.
  */
 Iridium.Net.DataType = {
-	/** @type {Iridium.Net.DataType}*/
-	JSON: /** @type {Iridium.Net.DataType}*/'json',
-	/** @type {Iridium.Net.DataType}*/
-	XML: /** @type {Iridium.Net.DataType}*/'xml',
-	/** @type {Iridium.Net.DataType}*/
-	TEXT: /** @type {Iridium.Net.DataType}*/'text'
+	JSON: 'json',
+	XML: 'xml',
+	TEXT: 'text'
 };
 
 Object.freeze(Iridium.Net.DataType);
@@ -111,9 +108,9 @@ Iridium.Net.objectURLEncode = function(obj)
 
 /**
  * Sends request to the URL with specified parameters.
- * @param {string} url URL.
+ * @param {string} url URL to send the request to.
  * @param {object} [parameters] Request parameters.
- * @param {object} [parameters.data] Request data.
+ * @param {FormData|object} [parameters.data] Request data. FormData can be only used with POST request.
  * @param {Iridium.Net.Method} [parameters.method = POST] Request method.
  * @param {Iridium.Net.DataType} [parameters.dataType = JSON] Type of the response data.
  * @param {RequestSuccess} [parameters.success] Success request callback.
@@ -131,21 +128,25 @@ Iridium.Net.request = function(url, parameters)
 
 	var _      = this,
 		params = {
-			method: this.Method.POST,
-			dataType: this.DataType.JSON,
-			user: '',
-			password: '',
+			method: _.Method.POST,
+			dataType: _.DataType.JSON,
+			user: null,
+			password: null,
 			timeout: 0
 		};
 
 	Iridium.merge(params, parameters);
 
-	//urlencode data
-	params.data = this.objectURLEncode(params.data);
+	var fd = params.data instanceof FormData;
 
-	if(params.method === this.Method.GET)
+	if(params.method === _.Method.GET)
 	{
-		url += (Iridium.stringContains('?', url) ? '&' : '?') + params.data;
+		if(fd)
+		{
+			throw new Error('FormData cannot be used with GET request.');
+		}
+
+		url += (Iridium.stringContains('?', url) ? '&' : '?') + _.objectURLEncode(params.data);
 	}
 
 	var httpRequest = new XMLHttpRequest();
@@ -214,12 +215,13 @@ Iridium.Net.request = function(url, parameters)
 		}
 	};
 
-	if(params.method === this.Method.POST)
+	if(params.method === _.Method.POST && !fd)
 	{
+		params.data = _.objectURLEncode(params.data);
 		httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	}
 
-	httpRequest.send(params.method === this.Method.POST ? params.data : null);
+	httpRequest.send(params.method === _.Method.POST ? params.data : null);
 };
 
 /**
