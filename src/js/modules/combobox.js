@@ -245,6 +245,16 @@ Iridium.Combobox = function(parameters)
 	function setHintsVisible(visible)
 	{
 		hints.style.display = visible ? '' : 'none';
+
+		var hintsVisibleClass = 'ir-cb-hints-visible';
+		if(visible)
+		{
+			combobox.classList.add(hintsVisibleClass);
+		}
+		else
+		{
+			combobox.classList.remove(hintsVisibleClass);
+		}
 	}
 
 	function isHintsVisible()
