@@ -18,7 +18,7 @@
  * along with Iridium Framework. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author rayleigh <rayleigh@protonmail.com>
- * @copyright 2018 Vladislav Pashaiev
+ * @copyright 2020 Vladislav Pashaiev
  * @license LGPL-3.0+
  * @module init
  * @requires Iridium
@@ -34,10 +34,12 @@
  * Iridium Init.
  * @namespace
  */
-Iridium.Init = {};
-
-(function()
+Iridium.Init = (function()
 {
+	'use strict';
+
+	var Init = {};
+
 	/**
 	 * List of the callback functions for the initialization.
 	 */
@@ -47,8 +49,9 @@ Iridium.Init = {};
 	 * Registers callback function for the initialization.
 	 * @param {string} name Name of the module.
 	 * @param {InitCallback} callback Callback function for the initialization.
+	 * @param {boolean} [once=false] Call initialization only once.
 	 */
-	Iridium.Init.register = function(name, callback)
+	Init.register = function(name, callback, once)
 	{
 		if(typeof name === 'string' && typeof callback === 'function')
 		{
@@ -57,24 +60,21 @@ Iridium.Init = {};
 				throw new Error('Specified name is already in use.');
 			}
 
-			list[name] = callback;
+			list[name] = {callback: callback, once: !!once};
 		}
 	};
 
 	/**
 	 * Clears initialization list.
 	 */
-	Iridium.Init.clear = function()
-	{
-		list = {};
-	};
+	Init.clear = function() { list = {}; };
 
 	/**
 	 * Launch initialization for specified element for the registered modules.
 	 * @param {HTMLElement} [element] Element for the initialization.
 	 * @param {string[]} [names] Names of the modules to initialize. If not specified, initialize all registered modules.
 	 */
-	Iridium.Init.launch = function(element, names)
+	Init.launch = function(element, names)
 	{
 		if(!(element instanceof HTMLElement))
 		{
@@ -88,12 +88,12 @@ Iridium.Init = {};
 				continue;
 			}
 
-			list[name](element);
+			var initData = list[name];
+			initData.callback(element);
+			if(initData.once) { delete list[name]; }
 		}
 	};
-}());
 
-window.addEventListener('load', function()
-{
-	Iridium.Init.launch(document.body);
-});
+	window.addEventListener('DOMContentLoaded', function() { Iridium.Init.launch(document.body); });
+	return Init;
+}());
