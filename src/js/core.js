@@ -33,24 +33,28 @@ var Iridium = {
 };
 
 /**
- * Generates random id.
- * @param {int} [length=5] Length.
- * @return {string} Generated id.
+ * Generates random string identifier based on the predefined symbols collection.
+ * @param {number} [length=5] Identifier length.
+ * @return {string} Generated random identifier.
  */
-Iridium.randomId = function(length)
-{
-	length = length || 5;
+Iridium.randomId = (function() {
+	var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var charsLen = chars.length;
 
-	var result = '',
-		min = 33, max = 126; // Symbol codes range
-
-	for(var i = 0; i < length; i++)
+	return function(length)
 	{
-		result += String.fromCharCode(Math.floor(Math.random() * (max - min + 1) + min));
-	}
+		length = length || 5;
 
-	return result;
-};
+		var result = '';
+
+		for(var i = 0; i < length; i++)
+		{
+			result += chars[Math.floor(Math.random() * charsLen)];
+		}
+
+		return result;
+	}
+})();
 
 /**
  * Check is string contains substring.
