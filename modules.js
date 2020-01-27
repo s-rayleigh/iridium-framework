@@ -232,6 +232,7 @@ manager.add(
 	new Module('url_data'),
 	new Module('net'),
 	new Module('animation'),
+	new Module('css_animation'),
 	new Module('combobox'),
 	new Module('data_list', ['net']),
 	new Module('popup', ['builder']),
